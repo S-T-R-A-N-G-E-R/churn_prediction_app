@@ -1,0 +1,20 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+*.egg
+.env
+*.sqlite3
+
+# Node.js
+node_modules/
+build/
+dist/
+.cache/
+
+# macOS
+.DS_Store
