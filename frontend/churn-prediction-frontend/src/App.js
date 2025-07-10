@@ -5,7 +5,7 @@ import './index.css'; // Ensure Tailwind is included
 
 // Placeholder components (we'll build these later)
 import PredictionPage from './components/PredictionPage';
-const ModelPerformancePage = () => <div className="p-4">Model Performance Page</div>;
+import ModelPerformancePage from './components/ModelPerformancePage';
 const FeatureImportancePage = () => <div className="p-4">Feature Importance Page</div>;
 
 function App() {
