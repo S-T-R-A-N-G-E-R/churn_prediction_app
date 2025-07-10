@@ -142,3 +142,58 @@ async def counterfactuals(data: PredictionInput):
         return {"counterfactuals": cfs}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Counterfactuals error: {str(e)}")
+
+
+@health_router.get("/model-performance")
+async def get_model_performance():
+    try:
+        # Placeholder metrics (replace with actual values from your model evaluation)
+        performance = {
+            "accuracy": 0.87,  # 85.2%
+            "precision": 0.87,  # 87.4%
+            "recall": 0.86,    # 83.9%
+            "f1_score": 0.87   # 85.6%
+        }
+        return performance
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching model performance: {str(e)}")
+    
+
+@health_router.get("/feature-importance")
+async def get_feature_importance():
+    try:
+        # Placeholder: Use a sample input to compute SHAP values
+        sample_input = {
+            "CreditScore": 600,
+            "Gender": 1,
+            "Age": 40,
+            "Tenure": 3,
+            "Balance": 50000.0,
+            "NumOfProducts": 2,
+            "HasCrCard": 1,
+            "IsActiveMember": 1,
+            "EstimatedSalary": 50000.0,
+            "Geography_Germany": 0,
+            "Geography_Spain": 0
+        }
+        input_data = pd.DataFrame([sample_input])
+        model = WrappedXGBModel(get_model(), ['Gender', 'HasCrCard', 'IsActiveMember', 'Geography_Germany', 'Geography_Spain'])
+        scaler = get_scaler()
+        numeric_features = ['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'EstimatedSalary']
+        categorical_features = ['Gender', 'HasCrCard', 'IsActiveMember', 'Geography_Germany', 'Geography_Spain']
+        input_numeric = input_data[numeric_features]
+        input_scaled_numeric = scaler.transform(input_numeric)
+        input_scaled = pd.DataFrame(input_scaled_numeric, columns=numeric_features, index=input_data.index)
+        input_final = pd.concat([input_scaled, input_data[categorical_features]], axis=1)
+        input_final[categorical_features] = input_final[categorical_features].astype('category')
+
+        explainer = shap.TreeExplainer(model.model)
+        shap_values = explainer.shap_values(input_final)[0]  # SHAP values for class 1
+        feature_names = input_final.columns
+        importance = {name: abs(value) for name, value in zip(feature_names, shap_values)}
+        # Sort by absolute importance and take top 5
+        top_features = dict(sorted(importance.items(), key=lambda x: x[1], reverse=True)[:5])
+
+        return top_features
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching feature importance: {str(e)}")
