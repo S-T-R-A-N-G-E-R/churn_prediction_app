@@ -1,22 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Chart from 'chart.js/auto';
+import { Tooltip } from 'react-tooltip';
 
 const PredictionPage = () => {
   const [formData, setFormData] = useState({
     CreditScore: '',
-    Geography: 'France', // Default to France
-    Gender: 'Male', // Default to Male
+    Geography: 'France',
+    Gender: 'Male',
     Age: '',
     Tenure: '',
     Balance: '',
     NumOfProducts: '',
-    HasCrCard: 'No', // Default to No
-    IsActiveMember: 'No', // Default to No
+    HasCrCard: 'No',
+    IsActiveMember: 'No',
     EstimatedSalary: '',
   });
   const [results, setResults] = useState(null);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -26,21 +27,36 @@ const PredictionPage = () => {
       ...prev,
       [name]: value,
     }));
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
+    if (name === 'CreditScore' && (value === '' || value < 0 || value > 1000)) {
+      newErrors[name] = 'Credit Score must be between 0 and 1000';
+    } else if (name === 'Age' && (value === '' || value < 18 || value > 120)) {
+      newErrors[name] = 'Age must be between 18 and 120';
+    } else {
+      delete newErrors[name];
+    }
+    setErrors(newErrors);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    setResults(null);
-
+    const allErrors = {};
     if (!formData.CreditScore || formData.CreditScore < 0 || formData.CreditScore > 1000) {
-      setError('Credit Score must be between 0 and 1000');
-      return;
+      allErrors.CreditScore = 'Credit Score must be between 0 and 1000';
     }
     if (formData.Age && (formData.Age < 18 || formData.Age > 120)) {
-      setError('Age must be between 18 and 120');
+      allErrors.Age = 'Age must be between 18 and 120';
+    }
+    if (Object.keys(allErrors).length > 0) {
+      setErrors(allErrors);
       return;
     }
+    setErrors({});
+    setResults(null);
 
     const processedData = {
       ...formData,
@@ -55,7 +71,7 @@ const PredictionPage = () => {
       const response = await axios.post('http://localhost:8000/predict', processedData);
       setResults(response.data);
     } catch (err) {
-      setError('Error fetching prediction. Check if the backend is running at http://localhost:8000.');
+      setErrors({ submit: 'Error fetching prediction. Check if the backend is running at http://localhost:8000.' });
       console.error(err);
     }
   };
@@ -91,10 +107,18 @@ const PredictionPage = () => {
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Customer Churn Prediction</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white card">
         {Object.keys(formData).map((field) => {
+          const tooltipId = `tooltip-${field}`;
           if (field === 'Geography') {
             return (
-              <div key={field}>
-                <label className="block text-sm font-medium text-gray-700 capitalize">Geography</label>
+              <div key={field} className="relative">
+                <label className="block text-sm font-medium text-gray-700 capitalize">Geography
+                  <span
+                    data-tooltip-id={tooltipId}
+                    className="ml-1 text-blue-500 cursor-help"
+                  >
+                    ?
+                  </span>
+                </label>
                 <select
                   name={field}
                   value={formData[field]}
@@ -106,12 +130,23 @@ const PredictionPage = () => {
                   <option value="Germany">Germany</option>
                   <option value="Spain">Spain</option>
                 </select>
+                <Tooltip id={tooltipId} place="top" effect="solid">
+                  Select the customer’s country (France, Germany, or Spain).
+                </Tooltip>
+                {errors[field] && <p className="mt-1 text-sm text-red-600">{errors[field]}</p>}
               </div>
             );
           } else if (field === 'Gender') {
             return (
-              <div key={field}>
-                <label className="block text-sm font-medium text-gray-700 capitalize">Gender</label>
+              <div key={field} className="relative">
+                <label className="block text-sm font-medium text-gray-700 capitalize">Gender
+                  <span
+                    data-tooltip-id={tooltipId}
+                    className="ml-1 text-blue-500 cursor-help"
+                  >
+                    ?
+                  </span>
+                </label>
                 <select
                   name={field}
                   value={formData[field]}
@@ -122,14 +157,25 @@ const PredictionPage = () => {
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                 </select>
+                <Tooltip id={tooltipId} place="top" effect="solid">
+                  Select the customer’s gender (Male or Female).
+                </Tooltip>
+                {errors[field] && <p className="mt-1 text-sm text-red-600">{errors[field]}</p>}
               </div>
             );
           } else if (field === 'HasCrCard' || field === 'IsActiveMember') {
             return (
-              <div key={field}>
-                <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+              <div key={field} className="relative">
+                <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}
+                  <span
+                    data-tooltip-id={tooltipId}
+                    className="ml-1 text-blue-500 cursor-help"
+                  >
+                    ?
+                  </span>
+                </label>
                 <div className="mt-1 flex space-x-4">
-                  <label className="flex items-center">
+                  <label className="flex items-center hover-effect">
                     <input
                       type="radio"
                       name={field}
@@ -140,7 +186,7 @@ const PredictionPage = () => {
                     />
                     Yes
                   </label>
-                  <label className="flex items-center">
+                  <label className="flex items-center hover-effect">
                     <input
                       type="radio"
                       name={field}
@@ -152,12 +198,23 @@ const PredictionPage = () => {
                     No
                   </label>
                 </div>
+                <Tooltip id={tooltipId} place="top" effect="solid">
+                  {field === 'HasCrCard' ? 'Does the customer have a credit card?' : 'Is the customer an active member?'}
+                </Tooltip>
+                {errors[field] && <p className="mt-1 text-sm text-red-600">{errors[field]}</p>}
               </div>
             );
           } else {
             return (
-              <div key={field}>
-                <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+              <div key={field} className="relative">
+                <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}
+                  <span
+                    data-tooltip-id={tooltipId}
+                    className="ml-1 text-blue-500 cursor-help"
+                  >
+                    ?
+                  </span>
+                </label>
                 <input
                   type={['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'EstimatedSalary'].includes(field) ? 'number' : 'text'}
                   name={field}
@@ -168,6 +225,15 @@ const PredictionPage = () => {
                   min={field === 'Age' ? 18 : field === 'CreditScore' ? 0 : undefined}
                   max={field === 'Age' ? 120 : field === 'CreditScore' ? 1000 : undefined}
                 />
+                <Tooltip id={tooltipId} place="top" effect="solid">
+                  {field === 'CreditScore' && 'Credit score (0-1000).'}
+                  {field === 'Age' && 'Customer age (18-120).'}
+                  {field === 'Tenure' && 'Years as a customer.'}
+                  {field === 'Balance' && 'Account balance in dollars.'}
+                  {field === 'NumOfProducts' && 'Number of bank products (1-4).'}
+                  {field === 'EstimatedSalary' && 'Estimated annual salary in dollars.'}
+                </Tooltip>
+                {errors[field] && <p className="mt-1 text-sm text-red-600">{errors[field]}</p>}
               </div>
             );
           }
@@ -179,9 +245,9 @@ const PredictionPage = () => {
           >
             Predict
           </button>
+          {errors.submit && <p className="mt-1 text-sm text-red-600">{errors.submit}</p>}
         </div>
       </form>
-      {error && <p className="mt-4 text-red-600">{error}</p>}
       {results && (
         <div className="mt-8 card">
           <h3 className="text-2xl font-bold mb-4 text-gray-800">Results</h3>
