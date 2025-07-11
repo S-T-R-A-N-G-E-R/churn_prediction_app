@@ -45,6 +45,11 @@ class WrappedXGBModel:
         return self.model.predict_proba(input_instance)
 
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 @health_router.post("/predict")
 async def predict_churn(data: PredictionInput, db: aiosqlite.Connection = Depends(get_db)):
     try:
@@ -62,9 +67,63 @@ async def predict_churn(data: PredictionInput, db: aiosqlite.Connection = Depend
         prediction = model.predict(input_final)[0]
         probability = model.predict_proba(input_final)[0][1]
 
+        # Calculate SHAP values
+        explainer = shap.TreeExplainer(model.model)
+        shap_values = explainer.shap_values(input_final)[0]  # SHAP values for class 1
+        feature_names = input_final.columns
+        shap_importance = {name: float(abs(value)) for name, value in zip(feature_names, shap_values)}
+        top_shap_features = dict(sorted(shap_importance.items(), key=lambda x: x[1], reverse=True)[:5])
+
         # Calculate additional fields
         risk_category = "High" if probability > 0.7 else "Medium" if probability > 0.3 else "Low"
-        clv_potential_loss = data.EstimatedSalary * (0.5 if prediction == 1 else 0.1)  # Simplified placeholder
+        clv_potential_loss = data.EstimatedSalary * (0.5 if prediction == 1 else 0.1)
+
+        # Generate counterfactuals
+        counterfactuals = []
+        if prediction == 1:  # If predicted to churn
+            cf_data = input_data.copy()
+            original_prob = probability
+            logger.info(f"Original probability: {original_prob}, Prediction: {prediction}")
+            for adjustment in [
+                {'Age': max(18, cf_data['Age'].iloc[0] - 15), 'IsActiveMember': 1, 'Tenure': 10},
+                {'NumOfProducts': min(4, cf_data['NumOfProducts'].iloc[0] + 2), 'IsActiveMember': 1, 'Tenure': 10},
+                {'Balance': cf_data['Balance'].iloc[0] * 0.5, 'IsActiveMember': 1}
+            ]:
+                cf_data_adjusted = cf_data.copy()
+                for feature, value in adjustment.items():
+                    cf_data_adjusted[feature] = value
+                cf_scaled = pd.DataFrame(scaler.transform(cf_data_adjusted[numeric_features]), columns=numeric_features, index=cf_data_adjusted.index)
+                cf_final = pd.concat([cf_scaled, cf_data_adjusted[categorical_features]], axis=1)[model_features]
+                cf_final[categorical_features] = cf_final[categorical_features].astype('category')
+                cf_prediction = model.predict(cf_final)[0]
+                cf_probability = model.predict_proba(cf_final)[0][1]
+                changes = [f"Set {k} to {v}" for k, v in adjustment.items()]
+                logger.info(f"Adjustment: {changes}, New Prediction: {cf_prediction}, New Probability: {cf_probability}")
+                if cf_prediction == 0 and cf_probability < original_prob:
+                    counterfactuals.append({
+                        "changes": changes,
+                        "new_prediction": "No Churn",
+                        "new_probability": float(cf_probability)
+                    })
+                elif cf_prediction == 1 and cf_probability < original_prob * 0.8:
+                    counterfactuals.append({
+                        "changes": changes,
+                        "new_prediction": "Churn (Reduced Risk)",
+                        "new_probability": float(cf_probability)
+                    })
+
+        # Generate business recommendations
+        recommendations = []
+        if prediction == 1:  # Churn predicted
+            recommendations.append("Consider targeted retention campaigns for this customer due to high churn risk.")
+            if counterfactuals:
+                recommendations.append(f"Implement the suggested changes ({', '.join(counterfactuals[0]['changes'])}) to potentially reduce churn risk to {counterfactuals[0]['new_probability']*100:.2f}%.")
+            else:
+                recommendations.append("Explore significant incentives (e.g., extended tenure, increased product offerings) to retain this customer.")
+        else:  # No churn predicted
+            recommendations.append("Continue current engagement strategies; this customer is at low risk of churn.")
+            if probability > 0.3:
+                recommendations.append("Monitor engagement metrics closely as there is a moderate churn probability.")
 
         await db.execute(
             "INSERT INTO predictions (CreditScore, Gender, Age, Tenure, Balance, "
@@ -80,7 +139,10 @@ async def predict_churn(data: PredictionInput, db: aiosqlite.Connection = Depend
             "prediction": int(prediction),
             "probability": float(probability),
             "risk_category": risk_category,
-            "clv_potential_loss": float(clv_potential_loss)
+            "clv_potential_loss": float(clv_potential_loss),
+            "shap_values": top_shap_features,
+            "counterfactuals": counterfactuals if counterfactuals else None,
+            "recommendations": recommendations
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")

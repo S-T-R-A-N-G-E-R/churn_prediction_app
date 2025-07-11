@@ -149,8 +149,33 @@ const PredictionPage = () => {
             <strong>SHAP Chart:</strong>
             <canvas ref={chartRef} style={{ maxWidth: '100%', height: 'auto' }} />
           </div>
-          <p className="mb-2"><strong>Counterfactuals:</strong> [Placeholder]</p>
-          <p><strong>Business Recommendations:</strong> [Placeholder]</p>
+          {results.counterfactuals && results.counterfactuals.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-xl font-semibold mb-2">Counterfactual Suggestions</h4>
+              {results.counterfactuals.map((cf, index) => (
+                <div key={index} className="p-4 bg-gray-50 rounded-md mb-2">
+                  <p><strong>New Prediction:</strong> {cf.new_prediction}</p>
+                  <p><strong>New Probability:</strong> {(cf.new_probability * 100).toFixed(2)}%</p>
+                  <p><strong>Changes:</strong></p>
+                  <ul className="list-disc pl-5">
+                    {cf.changes.map((change, i) => (
+                      <li key={i}>{change}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+          {results.recommendations && results.recommendations.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-xl font-semibold mb-2">Business Recommendations</h4>
+              <ul className="list-disc pl-5">
+                {results.recommendations.map((rec, index) => (
+                  <li key={index} className="mb-2">{rec}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
