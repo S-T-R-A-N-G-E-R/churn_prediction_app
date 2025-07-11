@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import Chart from 'chart.js/auto';
 
 const PredictionPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ const PredictionPage = () => {
   });
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +60,55 @@ const PredictionPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (results && results.shap_values && chartRef.current) {
+      console.log('SHAP Values:', results.shap_values);
+      if (chartInstance.current) {
+        chartInstance.current.destroy(); // Destroy previous chart instance
+      }
+      const ctx = chartRef.current.getContext('2d');
+      chartInstance.current = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(results.shap_values),
+          datasets: [{
+            label: 'SHAP Value',
+            data: Object.values(results.shap_values),
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'SHAP Value'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Features'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Top 5 Feature Contributions'
+            }
+          }
+        }
+      });
+    }
+  }, [results]);
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Customer Churn Prediction</h2>
@@ -93,7 +145,10 @@ const PredictionPage = () => {
           <p className="mb-2"><strong>Probability:</strong> {(results.probability * 100).toFixed(2)}%</p>
           <p className="mb-2"><strong>Risk Category:</strong> {results.risk_category}</p>
           <p className="mb-2"><strong>CLV/Potential Loss:</strong> ${results.clv_potential_loss.toFixed(2)}</p>
-          <div className="mb-2"><strong>SHAP Chart:</strong> [Placeholder - Chart will go here]</div>
+          <div className="mb-2">
+            <strong>SHAP Chart:</strong>
+            <canvas ref={chartRef} style={{ maxWidth: '100%', height: 'auto' }} />
+          </div>
           <p className="mb-2"><strong>Counterfactuals:</strong> [Placeholder]</p>
           <p><strong>Business Recommendations:</strong> [Placeholder]</p>
         </div>
