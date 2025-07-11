@@ -33,7 +33,6 @@ const PredictionPage = () => {
     setError(null);
     setResults(null);
 
-    // Basic validation
     if (!formData.CreditScore || formData.CreditScore < 0 || formData.CreditScore > 1000) {
       setError('Credit Score must be between 0 and 1000');
       return;
@@ -43,7 +42,6 @@ const PredictionPage = () => {
       return;
     }
 
-    // Encode categorical variables
     const processedData = {
       ...formData,
       Gender: formData.Gender === 'Female' ? 1 : 0,
@@ -62,9 +60,8 @@ const PredictionPage = () => {
 
   useEffect(() => {
     if (results && results.shap_values && chartRef.current) {
-      console.log('SHAP Values:', results.shap_values);
       if (chartInstance.current) {
-        chartInstance.current.destroy(); // Destroy previous chart instance
+        chartInstance.current.destroy();
       }
       const ctx = chartRef.current.getContext('2d');
       chartInstance.current = new Chart(ctx, {
@@ -79,31 +76,9 @@ const PredictionPage = () => {
           }]
         },
         options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'SHAP Value'
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Features'
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              display: true,
-              position: 'top'
-            },
-            title: {
-              display: true,
-              text: 'Top 5 Feature Contributions'
-            }
-          }
+          scales: { y: { beginAtZero: true }, x: { title: { display: true, text: 'Features' } } },
+          plugins: { legend: { display: true }, title: { display: true, text: 'Top 5 Feature Contributions' } },
+          maintainAspectRatio: false
         }
       });
     }
@@ -112,7 +87,7 @@ const PredictionPage = () => {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Customer Churn Prediction</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white card">
         {Object.keys(formData).map((field) => (
           <div key={field}>
             <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
@@ -121,7 +96,7 @@ const PredictionPage = () => {
               name={field}
               value={formData[field]}
               onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-effect"
               required
               min={field === 'Age' ? 18 : field === 'CreditScore' ? 0 : undefined}
               max={field === 'Age' ? 120 : field === 'CreditScore' ? 1000 : undefined}
@@ -139,21 +114,25 @@ const PredictionPage = () => {
       </form>
       {error && <p className="mt-4 text-red-600">{error}</p>}
       {results && (
-        <div className="mt-8 p-6 bg-white rounded-lg shadow-md">
+        <div className="mt-8 card">
           <h3 className="text-2xl font-bold mb-4 text-gray-800">Results</h3>
-          <p className="mb-2"><strong>Prediction:</strong> {results.prediction === 1 ? 'Churn' : 'No Churn'}</p>
-          <p className="mb-2"><strong>Probability:</strong> {(results.probability * 100).toFixed(2)}%</p>
-          <p className="mb-2"><strong>Risk Category:</strong> {results.risk_category}</p>
-          <p className="mb-2"><strong>CLV/Potential Loss:</strong> ${results.clv_potential_loss.toFixed(2)}</p>
-          <div className="mb-2">
-            <strong>SHAP Chart:</strong>
-            <canvas ref={chartRef} style={{ maxWidth: '100%', height: 'auto' }} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="mb-2"><strong>Prediction:</strong> {results.prediction === 1 ? 'Churn' : 'No Churn'}</p>
+              <p className="mb-2"><strong>Probability:</strong> {(results.probability * 100).toFixed(2)}%</p>
+              <p className="mb-2"><strong>Risk Category:</strong> {results.risk_category}</p>
+              <p className="mb-2"><strong>CLV/Potential Loss:</strong> ${results.clv_potential_loss.toFixed(2)}</p>
+            </div>
+            <div className="chart-container">
+              <strong>SHAP Chart:</strong>
+              <canvas ref={chartRef} />
+            </div>
           </div>
           {results.counterfactuals && results.counterfactuals.length > 0 && (
-            <div className="mt-4">
-              <h4 className="text-xl font-semibold mb-2">Counterfactual Suggestions</h4>
+            <div className="mt-4 card">
+              <h4 className="text-xl font-bold mb-2">Counterfactual Suggestions</h4>
               {results.counterfactuals.map((cf, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-md mb-2">
+                <div key={index} className="p-4 bg-gray-50 rounded-md mb-2 hover-effect">
                   <p><strong>New Prediction:</strong> {cf.new_prediction}</p>
                   <p><strong>New Probability:</strong> {(cf.new_probability * 100).toFixed(2)}%</p>
                   <p><strong>Changes:</strong></p>
@@ -167,11 +146,11 @@ const PredictionPage = () => {
             </div>
           )}
           {results.recommendations && results.recommendations.length > 0 && (
-            <div className="mt-4">
-              <h4 className="text-xl font-semibold mb-2">Business Recommendations</h4>
+            <div className="mt-4 card">
+              <h4 className="text-xl font-bold mb-2">Business Recommendations</h4>
               <ul className="list-disc pl-5">
                 {results.recommendations.map((rec, index) => (
-                  <li key={index} className="mb-2">{rec}</li>
+                  <li key={index} className="mb-2 hover-effect">{rec}</li>
                 ))}
               </ul>
             </div>

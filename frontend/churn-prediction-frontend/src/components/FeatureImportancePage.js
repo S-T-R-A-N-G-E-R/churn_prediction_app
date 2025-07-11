@@ -70,7 +70,7 @@ const FeatureImportancePage = () => {
               text: 'Top 5 Feature Importance'
             }
           },
-          maintainAspectRatio: false // Allow custom sizing
+          maintainAspectRatio: false
         }
       });
     } else if (!features) {
@@ -84,20 +84,20 @@ const FeatureImportancePage = () => {
       {error && <p className="mt-4 text-red-600">{error}</p>}
       {features && (
         <>
-          <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+          <div className="card">
             <h3 className="text-xl font-bold mb-4">Top Features Influencing Churn</h3>
             <ul className="space-y-2">
               {Object.entries(features).map(([name, importance], index) => (
-                <li key={index} className="flex justify-between">
+                <li key={index} className="flex justify-between hover-effect">
                   <span className="font-medium">{name}</span>
                   <span className="text-gray-600">{(importance * 100).toFixed(1)}%</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-md">
+          <div className="mt-6 card">
             <h3 className="text-xl font-bold mb-4">Feature Importance Chart</h3>
-            <div style={{ position: 'relative', height: '400px' }}>
+            <div className="chart-container">
               <canvas ref={chartRef} style={{ width: '100%', height: '100%' }} />
             </div>
           </div>

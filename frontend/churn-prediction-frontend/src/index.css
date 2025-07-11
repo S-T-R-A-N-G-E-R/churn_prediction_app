@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-color: #1d4ed8; /* Blue-700 */
+    --secondary-color: #9333ea; /* Purple-700 */
+    --background-color: #f3f4f6; /* Gray-100 */
+    --text-color: #1f2937; /* Gray-800 */
+    --card-bg: #ffffff; /* White */
+  }
+
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-md p-4;
+  }
+
+  .chart-container {
+    @apply relative h-64 md:h-80 lg:h-96;
+  }
+
+  .hover-effect {
+    @apply transition duration-200 hover:bg-gray-100;
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    @apply p-2;
+  }
+
+  .chart-container {
+    @apply h-48;
+  }
+}
