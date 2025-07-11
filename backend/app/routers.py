@@ -62,6 +62,10 @@ async def predict_churn(data: PredictionInput, db: aiosqlite.Connection = Depend
         prediction = model.predict(input_final)[0]
         probability = model.predict_proba(input_final)[0][1]
 
+        # Calculate additional fields
+        risk_category = "High" if probability > 0.7 else "Medium" if probability > 0.3 else "Low"
+        clv_potential_loss = data.EstimatedSalary * (0.5 if prediction == 1 else 0.1)  # Simplified placeholder
+
         await db.execute(
             "INSERT INTO predictions (CreditScore, Gender, Age, Tenure, Balance, "
             "NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary, Geography_Germany, "
@@ -72,7 +76,12 @@ async def predict_churn(data: PredictionInput, db: aiosqlite.Connection = Depend
         )
         await db.commit()
 
-        return {"prediction": int(prediction), "probability": float(probability)}
+        return {
+            "prediction": int(prediction),
+            "probability": float(probability),
+            "risk_category": risk_category,
+            "clv_potential_loss": float(clv_potential_loss)
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
@@ -190,7 +199,7 @@ async def get_feature_importance():
         explainer = shap.TreeExplainer(model.model)
         shap_values = explainer.shap_values(input_final)[0]  # SHAP values for class 1
         feature_names = input_final.columns
-        importance = {name: abs(value) for name, value in zip(feature_names, shap_values)}
+        importance = {name: float(abs(value)) for name, value in zip(feature_names, shap_values)}  # Convert to float
         # Sort by absolute importance and take top 5
         top_features = dict(sorted(importance.items(), key=lambda x: x[1], reverse=True)[:5])
 

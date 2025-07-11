@@ -43,7 +43,7 @@ const PredictionPage = () => {
     // Encode categorical variables
     const processedData = {
       ...formData,
-      Gender: formData.Gender === 'Female' ? 1 : 0, // Assuming 1 for Female, 0 for Male
+      Gender: formData.Gender === 'Female' ? 1 : 0,
       Geography_Germany: formData.Geography === 'Germany' ? 1 : 0,
       Geography_Spain: formData.Geography === 'Spain' ? 1 : 0,
     };
@@ -91,8 +91,8 @@ const PredictionPage = () => {
           <h3 className="text-2xl font-bold mb-4 text-gray-800">Results</h3>
           <p className="mb-2"><strong>Prediction:</strong> {results.prediction === 1 ? 'Churn' : 'No Churn'}</p>
           <p className="mb-2"><strong>Probability:</strong> {(results.probability * 100).toFixed(2)}%</p>
-          <p className="mb-2"><strong>Risk Category:</strong> [Placeholder]</p>
-          <p className="mb-2"><strong>CLV/Potential Loss:</strong> [Placeholder]</p>
+          <p className="mb-2"><strong>Risk Category:</strong> {results.risk_category}</p>
+          <p className="mb-2"><strong>CLV/Potential Loss:</strong> ${results.clv_potential_loss.toFixed(2)}</p>
           <div className="mb-2"><strong>SHAP Chart:</strong> [Placeholder - Chart will go here]</div>
           <p className="mb-2"><strong>Counterfactuals:</strong> [Placeholder]</p>
           <p><strong>Business Recommendations:</strong> [Placeholder]</p>
