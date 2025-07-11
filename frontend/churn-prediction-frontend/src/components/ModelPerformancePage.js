@@ -6,16 +6,16 @@ const ModelPerformancePage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchMetrics = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:8000/model-performance');
         setMetrics(response.data);
       } catch (err) {
-        setError('Error fetching model performance. Check if the backend is running.');
+        setError('Error fetching model performance data. Check if the backend is running.');
         console.error(err);
       }
     };
-    fetchMetrics();
+    fetchData();
   }, []);
 
   return (
@@ -44,11 +44,19 @@ const ModelPerformancePage = () => {
       )}
       <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
         <h3 className="text-xl font-bold mb-2">ROC Curve</h3>
-        <p>[Placeholder - Image or chart will go here]</p>
+        <img
+          src="http://localhost:8000/static/roc_curve_xgboost_tuned.png"
+          alt="ROC Curve"
+          className="max-w-full h-auto"
+        />
       </div>
       <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
         <h3 className="text-xl font-bold mb-2">Confusion Matrix</h3>
-        <p>[Placeholder - Image or chart will go here]</p>
+        <img
+          src="http://localhost:8000/static/confusion_matrix_xgboost_tuned.png"
+          alt="Confusion Matrix"
+          className="max-w-full h-auto"
+        />
       </div>
     </div>
   );
