@@ -5,14 +5,14 @@ import Chart from 'chart.js/auto';
 const PredictionPage = () => {
   const [formData, setFormData] = useState({
     CreditScore: '',
-    Geography: '',
-    Gender: '',
+    Geography: 'France', // Default to France
+    Gender: 'Male', // Default to Male
     Age: '',
     Tenure: '',
     Balance: '',
     NumOfProducts: '',
-    HasCrCard: '',
-    IsActiveMember: '',
+    HasCrCard: 'No', // Default to No
+    IsActiveMember: 'No', // Default to No
     EstimatedSalary: '',
   });
   const [results, setResults] = useState(null);
@@ -47,6 +47,8 @@ const PredictionPage = () => {
       Gender: formData.Gender === 'Female' ? 1 : 0,
       Geography_Germany: formData.Geography === 'Germany' ? 1 : 0,
       Geography_Spain: formData.Geography === 'Spain' ? 1 : 0,
+      HasCrCard: formData.HasCrCard === 'Yes' ? 1 : 0,
+      IsActiveMember: formData.IsActiveMember === 'Yes' ? 1 : 0,
     };
 
     try {
@@ -88,21 +90,88 @@ const PredictionPage = () => {
     <div className="p-6 max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Customer Churn Prediction</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white card">
-        {Object.keys(formData).map((field) => (
-          <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
-            <input
-              type={['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary'].includes(field) ? 'number' : 'text'}
-              name={field}
-              value={formData[field]}
-              onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-effect"
-              required
-              min={field === 'Age' ? 18 : field === 'CreditScore' ? 0 : undefined}
-              max={field === 'Age' ? 120 : field === 'CreditScore' ? 1000 : undefined}
-            />
-          </div>
-        ))}
+        {Object.keys(formData).map((field) => {
+          if (field === 'Geography') {
+            return (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 capitalize">Geography</label>
+                <select
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-effect"
+                  required
+                >
+                  <option value="France">France</option>
+                  <option value="Germany">Germany</option>
+                  <option value="Spain">Spain</option>
+                </select>
+              </div>
+            );
+          } else if (field === 'Gender') {
+            return (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 capitalize">Gender</label>
+                <select
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-effect"
+                  required
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+            );
+          } else if (field === 'HasCrCard' || field === 'IsActiveMember') {
+            return (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+                <div className="mt-1 flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name={field}
+                      value="Yes"
+                      checked={formData[field] === 'Yes'}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    Yes
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name={field}
+                      value="No"
+                      checked={formData[field] === 'No'}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+            );
+          } else {
+            return (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+                <input
+                  type={['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'EstimatedSalary'].includes(field) ? 'number' : 'text'}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-effect"
+                  required
+                  min={field === 'Age' ? 18 : field === 'CreditScore' ? 0 : undefined}
+                  max={field === 'Age' ? 120 : field === 'CreditScore' ? 1000 : undefined}
+                />
+              </div>
+            );
+          }
+        })}
         <div className="col-span-1 md:col-span-2">
           <button
             type="submit"
