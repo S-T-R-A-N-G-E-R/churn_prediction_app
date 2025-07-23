@@ -2,60 +2,206 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --glass-blur: blur(20px);
+  --liquid-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  --surface-elevated: rgba(255, 255, 255, 0.12);
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --accent-blue: #007AFF;
+  --accent-purple: #5856D6;
+}
+
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900;
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105;
-  }
-  
-  .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-6 rounded-xl border border-gray-300 shadow-sm transition-all duration-200;
-  }
-  
-  .card {
-    @apply bg-white shadow-xl rounded-2xl p-6 border border-gray-100;
-  }
-
-  .form-input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white;
+  .glass-surface {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .form-select {
-    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
-  }
-
-  .section-header {
-    @apply text-lg font-semibold text-gray-800 mb-3 flex items-center;
-  }
-
-  .gradient-bg {
-    @apply bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100;
+  .glass-surface::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50;
+    @apply glass-surface;
+    background: var(--liquid-gradient);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .hover-lift {
-    @apply transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 60px 0 rgba(31, 38, 135, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .liquid-button {
+    @apply glass-surface px-6 py-3 font-medium transition-all duration-300;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    border: none;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .liquid-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .liquid-button:hover::before {
+    left: 100%;
+  }
+
+  .liquid-button:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 122, 255, 0.3);
+  }
+
+  .glass-input {
+    @apply glass-surface px-4 py-3 text-white placeholder-gray-300 border-0 focus:outline-none;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.5);
+  }
+
+  .floating-nav {
+    @apply glass-surface fixed top-6 left-1/2 transform -translate-x-1/2 z-50;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px;
+  }
+
+  .nav-item {
+    @apply px-4 py-2 rounded-2xl transition-all duration-300 text-white font-medium;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+
+  .nav-item.active {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  }
+
+  .liquid-card-container {
+    perspective: 1000px;
+  }
+
+  .liquid-card-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .liquid-card-3d:hover {
+    transform: rotateY(5deg) rotateX(5deg);
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+  .text-glass {
+    color: var(--text-primary);
+  }
+  
+  .text-glass-secondary {
+    color: var(--text-secondary);
   }
 
-  .shadow-glow {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+  .animate-liquid-float {
+    animation: liquidFloat 6s ease-in-out infinite;
   }
 
-  .border-gradient {
-    @apply border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-border;
+  .animate-glow-pulse {
+    animation: glowPulse 2s ease-in-out infinite alternate;
   }
+}
+
+@keyframes liquidFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(1deg); }
+  50% { transform: translateY(-5px) rotate(0deg); }
+  75% { transform: translateY(-15px) rotate(-1deg); }
+}
+
+@keyframes glowPulse {
+  from { 
+    box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
+  }
+  to { 
+    box-shadow: 0 0 40px rgba(0, 122, 255, 0.6);
+  }
+}
+
+/* Navigation specific styles */
+.nav-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Fix for any layout issues */
+.glass-nav {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* Ensure navigation stays on top */
+.nav-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+/* Navigation centering fix */
+.nav-container {
+  position: fixed;
+  top: 24px;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.nav-container > * {
+  pointer-events: auto;
 }
