@@ -1,20 +1,215 @@
-# Python
-venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.egg-info/
-*.egg
-.env
-*.sqlite3
+# ============================================
+# Python Backend (.gitignore)
+# ============================================
 
-# Node.js
-node_modules/
-build/
-dist/
-.cache/
+# Virtual Environment
+backend/venv/
+backend/env/
+backend/.venv/
+backend/.env/
+
+# Python Cache
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/pip-log.txt
+backend/pip-delete-this-directory.txt
+
+# Testing & Coverage
+backend/.tox/
+backend/.coverage
+backend/.pytest_cache/
+backend/htmlcov/
+backend/.nox/
+backend/coverage.xml
+backend/nosetests.xml
+
+# ML Model Files (Optional - see note below)
+backend/models/*.joblib
+backend/models/*.pkl
+backend/models/*.h5
+backend/models/*.model
+
+# Large CSV files (Optional)
+backend/models/*.csv
+backend/data/*.csv
+
+# Jupyter Notebooks checkpoints
+backend/.ipynb_checkpoints/
+
+# ============================================
+# React Frontend (.gitignore)
+# ============================================
+
+# Dependencies
+frontend/node_modules/
+frontend/.npm
+frontend/.pnp
+frontend/.pnp.js
+
+# Production builds
+frontend/build/
+frontend/dist/
+frontend/.next/
+frontend/out/
+
+# Development
+frontend/.eslintcache
+frontend/.stylelintcache
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/lerna-debug.log*
+
+# Runtime data
+frontend/pids
+frontend/*.pid
+frontend/*.seed
+frontend/*.pid.lock
+
+# ============================================
+# IDE & Editor Files
+# ============================================
+
+# Visual Studio Code
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# IntelliJ IDEA / PyCharm
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ============================================
+# Operating System Files
+# ============================================
 
 # macOS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Windows
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# Temporary & Log Files
+# ============================================
+
+# General logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# ============================================
+# Security & Sensitive Data
+# ============================================
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# API Keys and secrets
+secrets.json
+config/secrets.yaml
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Documentation & Reports
+# ============================================
+
+# Generated documentation
+docs/_build/
+site/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# ============================================
+# Project Specific
+# ============================================
+
+# ML experiment tracking
+mlruns/
+.mlflow/
+wandb/
+
+# Model artifacts (if very large)
+# Uncomment if your models are >100MB
+# *.joblib
+# *.pkl
+
+# Generated charts and plots
+plots/
+charts/
+*.png
+*.jpg
+*.pdf
+!assets/*.png  # Keep assets images
+!public/*.png  # Keep public images
