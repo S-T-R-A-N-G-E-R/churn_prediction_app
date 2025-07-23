@@ -27,15 +27,8 @@ backend/.nox/
 backend/coverage.xml
 backend/nosetests.xml
 
-# ML Model Files (Optional - see note below)
-backend/models/*.joblib
-backend/models/*.pkl
-backend/models/*.h5
-backend/models/*.model
 
-# Large CSV files (Optional)
-backend/models/*.csv
-backend/data/*.csv
+
 
 # Jupyter Notebooks checkpoints
 backend/.ipynb_checkpoints/
