@@ -52,7 +52,7 @@
 
 | Prediction Interface | SHAP Explanations | Performance Dashboard |
 |:--------------------:|:-----------------:|:---------------------:|
-| ![Prediction](https://via.placeholder.com/300x200/667eea/ffffff?text=Prediction+UI) | ![SHAP](https://via.placeholder.com/300x200/f093fb/ffffff?text=SHAP+Analysis) | ![Dashboard](https://via.placeholder.com/300x200/4facfe/ffffff?text=Analytics) |
+| ![Prediction](./assets/screenshots/prediction-interface.png) | ![SHAP](./assets/screenshots/shap-analysis.png) | ![Dashboard](./assets/screenshots/performance-dashboard.png) |
 
 </div>
 
@@ -549,10 +549,10 @@ Built with amazing open-source technologies:
 <td align="center">
 
 ### 👨‍💻 **Author**
-**Swapnil S**
+**Swapnil Roy**
 
 [![GitHub](https://img.shields.io/badge/GitHub-S--T--R--A--N--G--E--R-181717?style=for-the-badge&logo=github)](https://github.com/S-T-R-A-N-G-E-R)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077b5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/your-profile)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077b5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/swapnilroy001/)
 
 </td>
 <td align="center">
