@@ -115,12 +115,11 @@ npm start
 
 | Metric | Score | Visual |
 |--------|--------|--------|
-| **Accuracy** | 96.9% | ![](https://progress-bar.dev/97?title=Accuracy&width=200&color=4ade80) |
-| **Precision** | 92.3% | ![](https://progress-bar.dev/92?title=Precision&width=200&color=3b82f6) |
-| **Recall** | 88.6% | ![](https://progress-bar.dev/89?title=Recall&width=200&color=8b5cf6) |
-| **F1-Score** | 90.4% | ![](https://progress-bar.dev/90?title=F1-Score&width=200&color=f59e0b) |
-| **AUC-ROC** | 98.5% | ![](https://progress-bar.dev/99?title=AUC-ROC&width=200&color=ef4444) |
-
+| **Accuracy** | 96.9% | ![Accuracy](https://img.shields.io/badge/Accuracy-96.9%25-brightgreen?style=flat-square) |
+| **Precision** | 92.3% | ![Precision](https://img.shields.io/badge/Precision-92.3%25-green?style=flat-square) |
+| **Recall** | 88.6% | ![Recall](https://img.shields.io/badge/Recall-88.6%25-yellowgreen?style=flat-square) |
+| **F1-Score** | 90.4% | ![F1](https://img.shields.io/badge/F1--Score-90.4%25-green?style=flat-square) |
+| **AUC-ROC** | 98.5% | ![AUC](https://img.shields.io/badge/AUC--ROC-98.5%25-brightgreen?style=flat-square) |
 </div>
 
 ### 🎯 Business Impact Metrics
