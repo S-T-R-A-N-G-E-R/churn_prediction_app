@@ -521,7 +521,7 @@ We welcome contributions! Here's how to get started:
 
 ---
 
-## 📄 Acknowledgments
+## 📄 License & Acknowledgments
 
 <div align="center">
 
