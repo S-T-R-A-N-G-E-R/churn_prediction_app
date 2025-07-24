@@ -99,40 +99,44 @@ const PredictionPage: React.FC = () => {
   };
 
   const handlePredict = async () => {
-    setLoading(true);
+  setLoading(true);
+  try {
+    // Get prediction
+    const predictionResult = await churnAPI.predict(customerData);
+    console.log('Prediction Result:', predictionResult); // Debug log
+    setResults(predictionResult);
+    
+    // Always get SHAP explanations
     try {
-      // Get prediction
-      const predictionResult = await churnAPI.predict(customerData);
-      setResults(predictionResult);
-      
-      // Always get SHAP explanations (for both churn and non-churn predictions)
+      const explanationResult = await churnAPI.explain(customerData);
+      console.log('Explanation Result:', explanationResult); // Debug log
+      setExplanation(explanationResult);
+    } catch (error) {
+      console.log('SHAP explanation not available:', error);
+      setExplanation(null);
+    }
+    
+    // Get counterfactuals only if customer is predicted to churn
+    if (predictionResult.prediction === 1) {
       try {
-        const explanationResult = await churnAPI.explain(customerData);
-        setExplanation(explanationResult);
+        const counterfactualResult = await churnAPI.getCounterfactuals(customerData, 0, 1);
+        console.log('Counterfactual Result:', counterfactualResult); // Debug log
+        setCounterfactuals(counterfactualResult);
       } catch (error) {
-        console.log('SHAP explanation not available');
-        setExplanation(null);
-      }
-      
-      // Get counterfactuals only if customer is predicted to churn
-      if (predictionResult.prediction === 1) {
-        try {
-          const counterfactualResult = await churnAPI.getCounterfactuals(customerData, 0, 1);
-          setCounterfactuals(counterfactualResult);
-        } catch (error) {
-          console.log('Counterfactuals not available');
-          setCounterfactuals(null);
-        }
-      } else {
+        console.log('Counterfactuals not available:', error);
         setCounterfactuals(null);
       }
-    } catch (error) {
-      console.error('Prediction error:', error);
-      alert('Error connecting to the prediction service. Make sure your backend is running on http://127.0.0.1:8000');
-    } finally {
-      setLoading(false);
+    } else {
+      setCounterfactuals(null);
     }
-  };
+  } catch (error) {
+    console.error('Prediction error:', error);
+    alert('Error connecting to the prediction service. Make sure your backend is running on http://127.0.0.1:8000');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const FormSection: React.FC<{
     title: string;

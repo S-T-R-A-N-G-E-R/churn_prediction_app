@@ -205,3 +205,222 @@
 .nav-container > * {
   pointer-events: auto;
 }
+/* Enhanced glass effects for charts */
+.chart-glass-container {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-glass-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+}
+
+/* Glass tooltip styles */
+.recharts-tooltip-wrapper {
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.3));
+}
+
+/* Glass legend styles */
+.recharts-legend-wrapper {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated chart elements */
+.chart-bar-animation {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-bar-animation:hover {
+  filter: brightness(1.2) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+/* Add to your index.css */
+.chart-container {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: none !important;
+}
+
+/* Fix z-index issues */
+.shap-chart {
+  position: relative;
+  z-index: 10;
+}
+/* In your index.css */
+.chart-container {
+  background: rgba(255, 255, 255, 0.95) !important; /* Solid background for visibility */
+  backdrop-filter: none !important; /* Remove blur */
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* In your index.css or equivalent */
+.chart-container {
+  background: rgba(255, 255, 255, 0.95) !important; /* Solid background */
+  backdrop-filter: none !important; /* Remove blur */
+  border: 2px solid #00ff00 !important; /* Green border for visibility */
+  padding: 20px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  position: relative !important;
+  z-index: 20 !important; /* Ensure it’s above other elements */
+}
+
+.chart-container .recharts-wrapper {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Override any conflicting glass styles */
+.chart-glass-container,
+.glass-card {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.chart-container h3,
+.chart-container .text-sm {
+  color: #333 !important; /* Ensure text is readable */
+}
+/* In your index.css or equivalent */
+.chart-container {
+  background: rgba(255, 255, 255, 0.95) !important; /* Solid background */
+  backdrop-filter: none !important; /* Remove blur */
+  border: 2px solid #00ff00 !important; /* Green border for visibility */
+  padding: 20px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  position: relative !important;
+  z-index: 20 !important; /* Ensure it’s above other elements */
+  overflow: visible !important; /* Allow overflow if needed */
+}
+
+.chart-container .recharts-wrapper {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Override any conflicting glass styles */
+.chart-glass-container,
+.glass-card {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.chart-container h3,
+.chart-container .text-sm {
+  color: #333 !important; /* Ensure text is readable */
+}
+
+/* In your index.css or equivalent */
+.chart-container {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: none !important;
+  border: 2px solid #00ff00 !important;
+  padding: 20px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  position: relative !important;
+  z-index: 20 !important;
+  overflow: visible !important;
+}
+
+.chart-container .recharts-wrapper {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-container h3,
+.chart-container .text-sm {
+  color: #333 !important;
+}
+
+/* Ensure SVG elements are not clipped */
+.recharts-wrapper svg {
+  overflow: visible !important;
+}
+
+/* In your index.css or equivalent */
+.chart-container {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: none !important;
+  border: 2px solid #00ff00 !important;
+  padding: 20px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  position: relative !important;
+  z-index: 20 !important;
+  overflow: visible !important;
+}
+
+.chart-container .recharts-wrapper {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-container h3,
+.chart-container .text-sm {
+  color: #333 !important;
+}
+
+.recharts-wrapper svg {
+  overflow: visible !important;
+}
+
+
+.chart-container {
+  background: rgba(255, 255, 255, 1) !important; /* Opaque white background */
+  border: 2px solid #00ff00 !important;          /* Green border for visibility */
+  padding: 20px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  position: relative !important;
+  z-index: 20 !important;
+  overflow: visible !important;
+}
+
+.chart-container .recharts-wrapper {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-container h3,
+.chart-container .text-sm {
+  color: #333 !important;
+}
+
+.recharts-wrapper svg {
+  overflow: visible !important;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 1000 !important; /* Ensure tooltip is on top */
+}

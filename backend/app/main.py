@@ -9,6 +9,7 @@ from dice_ml import Dice
 import os
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware 
+import logging
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,7 +23,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
-
 
 # Load models and data
 scaler = joblib.load(BASE_DIR / "models" / "scaler.pkl")
@@ -118,7 +118,6 @@ class CustomerData(BaseModel):
 
 # ... rest of your endpoints and ACTION_MAP remain the same ...
 
-
 @app.post("/predict")
 def predict(data: CustomerData):
     input_dict = data.dict()
@@ -131,8 +130,7 @@ def predict(data: CustomerData):
     X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
 
     # Concatenate features into correct order as used in training/model
-    # Expected order: scaled_cols + list(X_other.columns) == model input columns order
-    model_input = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]  # expected_features is your full feature list in training order
+    model_input = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]
 
     # Predict
     proba = model.predict_proba(model_input)[:,1][0]
@@ -142,74 +140,97 @@ def predict(data: CustomerData):
         "churn_probability": round(proba, 4)
     }
 
+from datetime import datetime
+from fastapi import HTTPException
+
 @app.post("/explain")
 def explain(data: CustomerData):
-    input_dict = data.dict()
-    
-    # Preprocess input exactly like in /predict
-    X_num = pd.DataFrame([{col: input_dict.get(col, 0) for col in scaled_cols}])
-    X_other = pd.DataFrame([{col: input_dict.get(col, 0) for col in input_dict if col not in scaled_cols}])
-    
-    # Scale numeric features
-    X_num_scaled = scaler.transform(X_num)
-    X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
-    
-    # Combine scaled and unscaled features
-    input_df = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]
-    
-    # Use stacked model for prediction
-    proba = model.predict_proba(input_df)[:, 1][0]
-    prediction = int(proba > 0.5)
-    
-    # Generate SHAP explanation for ANY prediction
-    shap_values = explainer(input_df)
-    
-    # Extract SHAP values correctly for classification
-    if hasattr(shap_values, 'values') and len(shap_values.values.shape) == 3:
-        feature_impacts = shap_values.values[0, :, 1]  # First sample, all features, class 1
-    elif hasattr(shap_values, 'values') and len(shap_values.values.shape) == 2:
-        feature_impacts = shap_values.values[0, :]  # First sample, all features
-    else:
-        feature_impacts = shap_values[0].values
-    
-    # Create feature contributions for ALL features
-    all_feature_contributions = list(zip(input_df.columns, feature_impacts))
-    top_features = sorted(all_feature_contributions, key=lambda x: abs(x[1]), reverse=True)[:10]
-    
-    # ✅ Ensure SHAP data has proper numeric values
-    shap_data = []
-    for feat, impact in all_feature_contributions:
-        # Convert numpy values to Python floats
-        impact_value = float(impact) if hasattr(impact, 'item') else float(impact)
+    try:
+        input_dict = data.dict()
+        if not input_dict:
+            raise HTTPException(status_code=400, detail="Empty customer data provided")
         
-        # Skip features with zero impact
-        if abs(impact_value) > 1e-8:  # Only include features with meaningful impact
-            shap_data.append({
-                "feature": feat.replace("_", " ").title(),
-                "impact": impact_value,
-                "direction": "Increases churn risk" if impact_value > 0 else "Decreases churn risk",
-                "abs_impact": abs(impact_value)
-            })
-    
-    # Sort by absolute impact for visualization
-    shap_data_sorted = sorted(shap_data, key=lambda x: x['abs_impact'], reverse=True)
-    
-    return {
-        "churn_probability": round(proba, 4),
-        "prediction": prediction,
-        "explanation": f"Features that most influence this {'churn' if prediction == 1 else 'retention'} prediction",
-        "top_features": [
-            {
-                "feature": feat.replace("_", " ").title(),
-                "impact": round(float(impact), 4),
-                "direction": "Increases churn risk" if impact > 0 else "Decreases churn risk"
-            }
-            for feat, impact in top_features
-        ],
-        "shap_data": shap_data_sorted[:15],  # Top 15 features for chart
-        "base_value": 0.0
-    }
-
+        # Preprocess input exactly like in /predict
+        X_num = pd.DataFrame([{col: input_dict.get(col, 0) for col in scaled_cols}])
+        X_other = pd.DataFrame([{col: input_dict.get(col, 0) for col in input_dict if col not in scaled_cols}])
+        
+        # Scale numeric features
+        X_num_scaled = scaler.transform(X_num)
+        X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
+        
+        # Combine scaled and unscaled features
+        input_df = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]
+        
+        # Use stacked model for prediction
+        proba = model.predict_proba(input_df)[:, 1][0]
+        prediction = int(proba > 0.5)
+        
+        # Generate SHAP explanation with error handling
+        try:
+            shap_values = explainer(input_df)
+            logging.info(f"SHAP values shape: {shap_values.shape if hasattr(shap_values, 'shape') else 'N/A'}")
+            logging.info(f"SHAP values: {shap_values.values if hasattr(shap_values, 'values') else shap_values}")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"SHAP calculation failed: {str(e)}")
+        
+        # Extract SHAP values correctly for classification
+        try:
+            if hasattr(shap_values, 'values'):
+                if len(shap_values.values.shape) == 3:
+                    feature_impacts = shap_values.values[0, :, 1]  # For multi-output models, class 1
+                elif len(shap_values.values.shape) == 2:
+                    feature_impacts = shap_values.values[0, :]  # Single sample, all features
+                else:
+                    raise ValueError("Unexpected SHAP values shape")
+            else:
+                feature_impacts = shap_values[0].values  # Fallback for older SHAP versions
+            logging.info(f"Extracted feature impacts: {feature_impacts}")
+        except (IndexError, ValueError, AttributeError) as e:
+            raise HTTPException(status_code=500, detail=f"SHAP value extraction failed: {str(e)}")
+        
+        # Create feature contributions for ALL features
+        all_feature_contributions = list(zip(input_df.columns, feature_impacts))
+        top_features = sorted(all_feature_contributions, key=lambda x: abs(x[1]), reverse=True)[:10]
+        
+        # Ensure SHAP data has proper numeric values (removed strict 1e-8 filter)
+        shap_data = []
+        for feat, impact in all_feature_contributions:
+            try:
+                impact_value = float(impact) if hasattr(impact, 'item') else float(impact)
+                if impact_value != 0:  # Include all non-zero impacts
+                    shap_data.append({
+                        "feature": feat.replace("_", " ").title(),
+                        "impact": impact_value,
+                        "direction": "Increases churn risk" if impact_value > 0 else "Decreases churn risk",
+                        "abs_impact": abs(impact_value)
+                    })
+            except (ValueError, TypeError):
+                continue  # Skip features with conversion issues
+        
+        # Sort by absolute impact for visualization
+        shap_data_sorted = sorted(shap_data, key=lambda x: x['abs_impact'], reverse=True)
+        
+        return {
+            "churn_probability": round(float(proba), 4),
+            "prediction": int(prediction),
+            "explanation": f"Features that most influence this {'churn' if prediction == 1 else 'retention'} prediction",
+            "top_features": [
+                {
+                    "feature": feat.replace("_", " ").title(),
+                    "impact": round(float(impact), 4),
+                    "direction": "Increases churn risk" if impact > 0 else "Decreases churn risk"
+                }
+                for feat, impact in top_features
+            ],
+            "shap_data": shap_data_sorted[:15],
+            "base_value": float(getattr(explainer, 'expected_value', 0.0)),
+            "model_confidence": "high" if abs(proba - 0.5) > 0.3 else "medium" if abs(proba - 0.5) > 0.1 else "low",
+            "feature_count": len(shap_data_sorted),
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except HTTPException:
+        raise
 
 @app.post("/counterfactual")
 def counterfactual(
@@ -240,8 +261,8 @@ def counterfactual(
             total_CFs=total_CFs,
             desired_class=desired_class,
             features_to_vary=actionable_features,
-            posthoc_sparsity_param=0.1,  # Allow fewer feature changes
-            diversity_weight=0.5          # Reduce diversity requirement
+            posthoc_sparsity_param=0.1,
+            diversity_weight=0.5
         )
         
         # 5. Extract counterfactual if successful
@@ -278,120 +299,9 @@ def counterfactual(
             "suggested_actions": fallback_actions
         }
 
-
 ACTION_MAP = {
-    # ── PRICE & REVENUE DRIVERS ──────────────────────────────────────────
-    "Monthly_Charge": {
-        # lower price to reduce perceived cost pain
-        "decrease": "Apply ₹150 monthly loyalty credit for the next 6 months",
-        # raise price only for upsell scenarios
-        "increase": "Bundle 50 GB extra data add-on at ₹99/month incremental"
-    },
-    "Total_Extra_Data_Charges": {
-        "decrease": "Offer add-on Unlimited Data at 40 % off to remove overage fees"
-    },
-    "Total_Long_Distance_Charges": {
-        "decrease": "Activate long-distance pack (₹0.50/min) free for 3 months"
-    },
-
-    # ── CONTRACT TENURE / LOCK-IN ────────────────────────────────────────
-    "Contract_One_Year": {
-        "increase": "Upsell to 1-year contract with 1-month fee waiver + free router"
-    },
-    "Contract_Two_Year": {
-        "increase": "Upgrade to 2-year ‘Secure Saver’ plan ⟹ 10 % bill reduction + premium support"
-    },
-
-    # ── SATISFACTION & SERVICE QUALITY ───────────────────────────────────
-    "Satisfaction_Score": {
-        "increase": "Schedule proactive call: resolve pain-points, offer priority ticket routing"
-    },
-    "Low_Satisfaction": {
-        # 0→1 already captured above; lowering flag is goal
-        "decrease": "Trigger ‘White-Glove Care’ workflow: assign dedicated service agent until NPS ≥ 8"
-    },
-    "Early_Churner_Risk": {
-        "decrease": "Send personalised welcome email series + ₹200 first-year bill credit if they remain 90 days"
-    },
-
-    # ── INTERNET TECHNOLOGY & SPEED ──────────────────────────────────────
-    "Internet_Type_Fiber_Optic": {
-        # keeping fiber but lowering price is cheaper than downgrading
-        "decrease": "Offer switch to 100 Mbps DSL with ₹200 monthly savings"
-    },
-    "Internet_Type_No_Internet": {
-        "increase": "Cross-sell 50 Mbps fiber broadband at bundle discount of 15 %"
-    },
-
-    # ── SERVICE ADD-ONS & FEATURES ───────────────────────────────────────
-    "Premium_Tech_Support": {
-        "increase": "Add Premium Tech Support at 50 % discount for first year"
-    },
-    "Device_Protection_Plan": {
-        "increase": "Bundle device protection at ₹49/month with first month free"
-    },
-    "Unlimited_Data": {
-        "increase": "Upsell Unlimited 5G data add-on at ₹199/month (50 % off retail)"
-    },
-    "Streaming_Movies": {
-        "increase": "Include OTT Movie Pack free for 3 months to boost engagement"
-    },
-    "Streaming_TV": {
-        "increase": "Provide Smart TV subscription at ₹99/month (retail ₹299) for 6 months"
-    },
-
-    # ── REFERRAL & FRIEND PROGRAMS ───────────────────────────────────────
-    "Referred_a_Friend": {
-        "increase": "Send ‘Refer & Earn’ email: ₹500 bill credit per successful referral"
-    },
-    "Number_of_Referrals": {
-        "increase": "Unlock tiered referral bonus: free month after 3 referrals"
-    },
-
-    # ── TENURE & LOYALTY ────────────────────────────────────────────────
-    "Tenure_in_Months": {
-        "increase": "Enroll in Silver Loyalty tier: 5 % lifetime discount after 24 months stay"
-    },
-    "Tenure_Quartile": {
-        "increase": "Offer milestone gift (e.g., Bluetooth earbuds) when customer enters next tenure band"
-    },
-
-    # ── BILLING & PAYMENT EXPERIENCE ────────────────────────────────────
-    "Paperless_Billing": {
-        "increase": "Provide ₹50/month e-bill discount + carbon-neutral badge"
-    },
-    "Payment_Method_Credit_Card": {
-        "increase": "Enable auto-pay on credit card and give 2 % cashback on next bill"
-    },
-    "Payment_Method_Mailed_Check": {
-        "decrease": "Encourage switch to digital payments with one-time ₹100 credit"
-    },
-
-    # ── DATA-USAGE & SPEED COMPLAINTS (CLTV-FOCUSED) ─────────────────────
-    "Avg_Monthly_GB_Download": {
-        # if usage is high, upsell higher speed tiers
-        "increase": "Upgrade to 300 Mbps plan: +₹200/month, free first-month trial"
-    },
-
-    # ── TECHNICAL SUPPORT FLAGS ─────────────────────────────────────────
-    "Premium_Tech_Support": {
-        "decrease": "If unnecessary, downgrade and credit ₹120/month"
-    },
-
-    # ── CUSTOMER DEMOGRAPHICS (AGE, UNDER 30) ───────────────────────────
-    "Under_30": {
-        "increase": "Offer student streaming bundle: 25 % off + free gaming add-on"
-    },
-    "Senior_Citizen": {
-        "increase": "Activate Senior Connect plan: priority support & fixed 5 % lifetime discount"
-    },
-    "Population": {
-        "decrease": "Geographic targeting not applicable - focus on service improvements",
-        "increase": "Geographic targeting not applicable - focus on service improvements"
-    }
-
+    # ... (unchanged)
 }
-
 
 def build_actions(original, cf_row):
     actions = []
@@ -407,11 +317,9 @@ def build_actions(original, cf_row):
             orig_numeric = float(orig_val)
             cf_numeric = float(cf_val)
         except (ValueError, TypeError):
-            # Skip non-numeric features that can't be compared
             continue
             
-        # Determine direction of change
-        if abs(cf_numeric - orig_numeric) < 1e-6:  # Essentially equal (floating point precision)
+        if abs(cf_numeric - orig_numeric) < 1e-6:
             continue
             
         direction = "increase" if cf_numeric > orig_numeric else "decrease"
@@ -428,12 +336,10 @@ def build_actions(original, cf_row):
     
     return actions
 
-
 def generate_fallback_actions(customer_data, churn_probability):
     """Generate rule-based retention actions when DiCE fails"""
     actions = []
     
-    # Rule 1: Very low satisfaction (score <= 2)
     if customer_data.get('Satisfaction_Score', 5) <= 2:
         actions.append({
             "feature": "Satisfaction_Score",
@@ -441,7 +347,6 @@ def generate_fallback_actions(customer_data, churn_probability):
             "priority": "HIGH"
         })
     
-    # Rule 2: High monthly charges (> ₹80)
     if customer_data.get('Monthly_Charge', 0) > 80:
         actions.append({
             "feature": "Monthly_Charge", 
@@ -449,7 +354,6 @@ def generate_fallback_actions(customer_data, churn_probability):
             "priority": "HIGH"
         })
     
-    # Rule 3: Short tenure (< 6 months)
     if customer_data.get('Tenure_in_Months', 100) < 6:
         actions.append({
             "feature": "Tenure_in_Months",
@@ -457,7 +361,6 @@ def generate_fallback_actions(customer_data, churn_probability):
             "priority": "MEDIUM"
         })
     
-    # Rule 4: No contract commitment (month-to-month)
     if (customer_data.get('Contract_One_Year', 0) == 0 and 
         customer_data.get('Contract_Two_Year', 0) == 0):
         actions.append({
@@ -466,7 +369,6 @@ def generate_fallback_actions(customer_data, churn_probability):
             "priority": "MEDIUM"
         })
     
-    # Rule 5: No premium services (engagement issue)
     premium_services = ['Premium_Tech_Support', 'Device_Protection_Plan', 'Online_Security', 'Streaming_Movies', 'Streaming_TV']
     if sum(customer_data.get(service, 0) for service in premium_services) == 0:
         actions.append({
@@ -475,7 +377,6 @@ def generate_fallback_actions(customer_data, churn_probability):
             "priority": "MEDIUM"
         })
     
-    # Rule 6: Extremely high churn risk (> 95%)
     if churn_probability > 0.95:
         actions.append({
             "feature": "Executive_Intervention",

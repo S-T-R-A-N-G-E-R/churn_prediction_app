@@ -1,14 +1,22 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ShapChart from './ShapChart';
 
 interface ResultsPanelProps {
   results: any;
   explanation: any;
+  counterfactuals?: any;
   activeTab: string;
-  onTabChange: (tab: string) => void;
+  onTabChange: (tab: 'summary' | 'analysis' | 'actions') => void;
 }
 
-const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ results, explanation, activeTab, onTabChange }) => {
+const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ 
+  results, 
+  explanation, 
+  counterfactuals, 
+  activeTab, 
+  onTabChange 
+}) => {
   if (!results) {
     return (
       <div className="glass-card p-8 text-center">
@@ -22,9 +30,9 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ results, explanation,
   }
 
   const tabs = [
-    { key: 'summary', label: 'Summary', icon: '📊' },
-    { key: 'analysis', label: 'Analysis', icon: '🔍' },
-    ...(results.prediction === 1 ? [{ key: 'actions', label: 'Actions', icon: '💡' }] : [])
+    { key: 'summary' as const, label: 'Summary', icon: '📊' },
+    { key: 'analysis' as const, label: 'Analysis', icon: '🔍' },
+    ...(counterfactuals && results.prediction === 1 ? [{ key: 'actions' as const, label: 'Actions', icon: '💡' }] : [])
   ];
 
   return (
@@ -82,7 +90,7 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ results, explanation,
           </div>
         </motion.div>
 
-        {/* Tabs */}
+        {/* Tabs - Show for all predictions if we have explanation data */}
         {explanation && (
           <>
             <div className="flex space-x-1 mb-6 bg-white/5 rounded-xl p-1">
@@ -115,7 +123,7 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ results, explanation,
                   <div className="space-y-3">
                     <h4 className="font-semibold text-glass flex items-center mb-4">
                       <span className="mr-2">🎯</span>
-                      Key Risk Factors
+                      {results.prediction === 1 ? 'Key Risk Factors:' : 'Key Retention Factors:'}
                     </h4>
                     {explanation.top_features?.slice(0, 5).map((feature: any, index: number) => (
                       <motion.div
@@ -139,15 +147,66 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ results, explanation,
                 )}
 
                 {activeTab === 'analysis' && (
-                  <div className="text-center p-8">
-                    <div className="glass-surface bg-blue-500/10 p-6 rounded-xl border border-blue-500/20">
-                      <h4 className="text-lg font-semibold text-glass mb-3">
-                        📊 Detailed Analysis Available
-                      </h4>
-                      <p className="text-glass-secondary text-sm">
-                        SHAP feature importance chart will be displayed below the form
-                      </p>
+                    <div className="space-y-4">
+                        <div className="text-center p-8">
+                        <div className="glass-surface bg-blue-500/10 p-6 rounded-xl border border-blue-500/20">
+                            <h4 className="text-lg font-semibold text-glass mb-3">
+                            📊 Detailed Analysis Available
+                            </h4>
+                            <p className="text-glass-secondary text-sm">
+                            Switch to the Analysis tab to view the comprehensive SHAP feature importance chart below.
+                            </p>
+                            <div className="mt-4">
+                            <div className="inline-flex items-center space-x-2 text-blue-300">
+                                <span>📍</span>
+                                <span className="text-sm font-medium">Full chart displayed below</span>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
                     </div>
+                    )}
+
+
+                {activeTab === 'actions' && counterfactuals && (
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-glass flex items-center mb-4">
+                      <span className="mr-2">🛠️</span>
+                      Retention Actions:
+                    </h4>
+                    {counterfactuals.suggested_actions?.slice(0, 4).map((action: any, index: number) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="p-4 bg-gradient-to-r from-blue-50/10 to-indigo-50/10 rounded-xl border border-blue-400/20"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="font-semibold text-blue-300 text-sm mb-1">
+                              {action.feature || `Action ${index + 1}`}
+                            </div>
+                            <div className="text-blue-400 text-xs leading-relaxed">
+                              {action.action || action.description || 'Recommended intervention to reduce churn risk'}
+                            </div>
+                          </div>
+                          {action.priority && (
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium ml-2 ${
+                              action.priority === 'CRITICAL' ? 'bg-red-100/20 text-red-300 border border-red-400/30' :
+                              action.priority === 'HIGH' ? 'bg-orange-100/20 text-orange-300 border border-orange-400/30' :
+                              'bg-yellow-100/20 text-yellow-300 border border-yellow-400/30'
+                            }`}>
+                              {action.priority}
+                            </span>
+                          )}
+                        </div>
+                      </motion.div>
+                    )) || (
+                      <div className="glass-surface bg-blue-500/10 p-6 rounded-xl border border-blue-500/20 text-center">
+                        <p className="text-glass-secondary">No specific actions available at this time.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </motion.div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CustomerData, churnAPI } from '../services/api';
 import LiquidPredictionForm from '../components/LiquidPredictionForm';
 import LiquidResultsPanel from '../components/LiquidResultsPanel';
+import ShapChart from '../components/ShapChart';
 
 const LiquidPredictionPage: React.FC = () => {
   const [customerData, setCustomerData] = useState<CustomerData>({
@@ -87,14 +88,16 @@ const LiquidPredictionPage: React.FC = () => {
     try {
       // Get prediction
       const predictionResult = await churnAPI.predict(customerData);
+      console.log('Prediction Result:', predictionResult);
       setResults(predictionResult);
       
       // Always get SHAP explanations
       try {
         const explanationResult = await churnAPI.explain(customerData);
+        console.log('Explanation Result:', explanationResult);
         setExplanation(explanationResult);
       } catch (error) {
-        console.log('SHAP explanation not available');
+        console.log('SHAP explanation not available:', error);
         setExplanation(null);
       }
       
@@ -102,9 +105,10 @@ const LiquidPredictionPage: React.FC = () => {
       if (predictionResult.prediction === 1) {
         try {
           const counterfactualResult = await churnAPI.getCounterfactuals(customerData, 0, 1);
+          console.log('Counterfactual Result:', counterfactualResult);
           setCounterfactuals(counterfactualResult);
         } catch (error) {
-          console.log('Counterfactuals not available');
+          console.log('Counterfactuals not available:', error);
           setCounterfactuals(null);
         }
       } else {
@@ -119,46 +123,136 @@ const LiquidPredictionPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Form Section */}
-        <div className="lg:col-span-2">
-          <LiquidPredictionForm 
-            customerData={customerData}
-            onDataChange={handleInputChange}
-            onPredict={handlePredict}
-            loading={loading}
-          />
-        </div>
-        
-        {/* Results Section */}
-        <div className="lg:col-span-1">
-          <LiquidResultsPanel 
-            results={results}
-            explanation={explanation}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
-        </div>
+    <div className="max-w-5xl mx-auto px-6 py-8">
+      {/* Customer Analysis Form - Full Width */}
+      <div className="mb-8">
+        <LiquidPredictionForm 
+          customerData={customerData}
+          onDataChange={handleInputChange}
+          onPredict={handlePredict}
+          loading={loading}
+        />
       </div>
 
-      {/* Full-width SHAP Chart */}
-      {activeTab === 'analysis' && explanation?.shap_data && (
-        <div className="mt-10">
-          <div className="glass-card p-8">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-glass mb-2">
-                🎯 Detailed Feature Impact Analysis
-              </h2>
-              <p className="text-glass-secondary">
-                Understanding what drives the {results?.prediction === 1 ? 'churn risk' : 'retention factors'} for this customer
-              </p>
-            </div>
-            
-            <div className="glass-surface bg-blue-500/10 p-6 rounded-xl border border-blue-500/20 text-center">
-              <p className="text-glass">SHAP Chart will be displayed here</p>
-            </div>
+      {/* Results Section - Full Width Below Form */}
+      {results && (
+        <div className="space-y-8">
+          {/* Main Results Panel - Modified to exclude internal SHAP chart */}
+          <div>
+            <LiquidResultsPanel 
+              results={results}
+              explanation={explanation}
+              counterfactuals={counterfactuals}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+            />
           </div>
+
+          {activeTab === 'analysis' && explanation?.shap_data && (
+            <div>
+                <div className="glass-card p-8">
+                <div> {/* Single wrapper for all children */}
+                    <div className="text-center mb-6">
+                    <h2 className="text-2xl font-bold text-glass mb-2">
+                        🎯 Complete Feature Impact Analysis
+                    </h2>
+                    <p className="text-glass-secondary">
+                        Understanding what drives the {results?.prediction === 1 ? 'churn risk' : 'retention factors'} for this customer
+                    </p>
+                    </div>
+
+                    <ShapChart 
+                    shapData={explanation.shap_data} 
+                    title="SHAP Feature Importance Analysis"
+                    />
+
+                    <div className="mt-6 p-4 bg-white/5 rounded-lg">
+                    <p className="text-sm text-glass-secondary text-center">
+                        💡 <strong>How to read this chart:</strong> Red bars show features that increase churn risk, 
+                        while blue bars show features that decrease churn risk. Longer bars indicate stronger influence.
+                    </p>
+                    </div>
+                </div> {/* End of single wrapper */}
+                </div>
+            </div>
+            )}
+
+          {/* Summary Analysis Section - No duplicate chart here */}
+          {explanation && (
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Summary Statistics */}
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-semibold text-glass mb-4 flex items-center">
+                  <span className="mr-2">📈</span>
+                  Prediction Summary
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 glass-surface rounded-lg">
+                    <span className="text-glass-secondary">Risk Level</span>
+                    <span className={`font-bold ${results.prediction === 1 ? 'text-red-300' : 'text-green-300'}`}>
+                      {results.prediction === 1 ? 'High Risk' : 'Low Risk'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 glass-surface rounded-lg">
+                    <span className="text-glass-secondary">Confidence</span>
+                    <span className="font-bold text-glass">
+                      {(results.churn_probability * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 glass-surface rounded-lg">
+                    <span className="text-glass-secondary">Top Risk Factor</span>
+                    <span className="font-bold text-glass">
+                      {explanation.top_features?.[0]?.feature || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 glass-surface rounded-lg">
+                    <span className="text-glass-secondary">Features Analyzed</span>
+                    <span className="font-bold text-glass">
+                      {explanation.shap_data?.length || 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Business Recommendations */}
+              <div className="glass-card p-6">
+                <h3 className="text-xl font-semibold text-glass mb-4 flex items-center">
+                  <span className="mr-2">💼</span>
+                  Business Insights
+                </h3>
+                <div className="space-y-4">
+                  <div className="p-4 glass-surface rounded-lg">
+                    <h4 className="font-semibold text-glass mb-2">Recommendation</h4>
+                    <p className="text-glass-secondary text-sm">
+                      {results.prediction === 1 
+                        ? 'Immediate intervention recommended. Focus on top risk factors and consider retention offers.'
+                        : 'Customer shows strong retention indicators. Maintain current service quality and consider upselling opportunities.'
+                      }
+                    </p>
+                  </div>
+                  <div className="p-4 glass-surface rounded-lg">
+                    <h4 className="font-semibold text-glass mb-2">Priority Level</h4>
+                    <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                      results.prediction === 1 
+                        ? 'bg-red-100/20 text-red-300 border border-red-300/30'
+                        : 'bg-green-100/20 text-green-300 border border-green-300/30'
+                    }`}>
+                      {results.prediction === 1 ? 'HIGH PRIORITY' : 'STANDARD MONITORING'}
+                    </div>
+                  </div>
+                  <div className="p-4 glass-surface rounded-lg">
+                    <h4 className="font-semibold text-glass mb-2">Next Steps</h4>
+                    <p className="text-glass-secondary text-sm">
+                      {results.prediction === 1 
+                        ? 'Review the feature analysis above to identify specific improvement areas.'
+                        : 'Monitor customer satisfaction and explore cross-selling opportunities.'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
