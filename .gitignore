@@ -204,5 +204,5 @@ charts/
 *.png
 *.jpg
 *.pdf
-!assets/*.png  # Keep assets images
-!public/*.png  # Keep public images
+!assets/**/*.png  # Keep all PNG files in assets and subfolders
+!public/**/*.png  # Keep all PNG files in public and subfolders
