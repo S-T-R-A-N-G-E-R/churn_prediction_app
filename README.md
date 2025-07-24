@@ -11,7 +11,7 @@
 
 **A cutting-edge machine learning application with real-time churn prediction, explainable AI insights, and stunning Liquid Glass UI**
 
-[🎯 Live Demo](#) • [📖 Documentation](#) • [🚀 Quick Start](#quick-start) • [📊 Performance](#model-performance)
+
 
 </div>
 
@@ -522,13 +522,9 @@ We welcome contributions! Here's how to get started:
 
 ---
 
-## 📄 License & Acknowledgments
+## 📄 Acknowledgments
 
 <div align="center">
-
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
-
-**Licensed under the MIT License** - see [LICENSE](LICENSE) for details
 
 ### 🙏 **Special Thanks**
 
