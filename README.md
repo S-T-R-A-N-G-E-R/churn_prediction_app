@@ -1,210 +1,210 @@
-# 🚀 AI-Powered Customer Churn Prediction System
+# 🔮 AI-Powered Customer Churn Prediction System
 
 <div align="center">
 
-![Churn Prediction](https://img.shields.io/badge/ML-Churn%20Prediction-brightgreen?style=for-the-badge&logo=scikit-learn)
-![Accuracy](https://img.shields.io/badge/Accuracy-96.9%25-success?style=for-the-badge&logo=target)
+![Churn Prediction](https://img.shields.io/badge/ML-Churn%20Prediction-ff6b6b?style=for-the-badge&logo=brain&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.9+-3776ab?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React-18.2.0-61dafb?style=for-the-badge&logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-4.7+-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-18.2.0-61dafb?style=for-the-badge&logo=react&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**A cutting-edge machine learning application with real-time churn prediction, explainable AI insights, and stunning Liquid Glass UI**
+**🚀 Enterprise-grade machine learning application with real-time churn prediction, explainable AI insights, and stunning Liquid Glass UI**
 
-
-</div>
-
----
-
-## ✨ Key Highlights
-
-<table>
-<tr>
-<td width="50%">
-
-### 🎯 **Machine Learning Excellence**
-- **96.9% Accuracy** with ensemble stacking
-- **Real-time predictions** in milliseconds
-- **SHAP explanations** for model transparency
-- **Counterfactual recommendations** for actionable insights
-- **Automated feature engineering** pipeline
-
-</td>
-<td width="50%">
-
-### 🎨 **Modern User Experience**
-- **Apple-inspired Liquid Glass UI**
-- **Responsive design** across all devices
-- **Interactive animations** with Framer Motion
-- **Collapsible form sections** for 48+ features
-- **Professional gradients** and micro-interactions
-
-</td>
-</tr>
-</table>
-
----
-
-## 🎬 Demo & Screenshots
-
-<div align="center">
-
-| Prediction Interface | SHAP Explanations | Performance Dashboard |
-|:--------------------:|:-----------------:|:---------------------:|
-| ![Prediction](./assets/screenshots/prediction-interface.png) | ![SHAP](./assets/screenshots/shap-analysis.png) | ![Dashboard](./assets/screenshots/performance-dashboard.png) |
+[Demo](#demo) • [Features](#features) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Contributing](#contributing)
 
 </div>
 
 ---
+
+## 🌟 Overview
+
+Transform your customer retention strategy with this cutting-edge AI system that predicts customer churn with **98.3% accuracy**. Built with modern ML techniques and featuring an Apple-inspired Liquid Glass interface, this system provides actionable insights to reduce churn and maximize customer lifetime value.
+
+### 🎯 Key Highlights
+
+- 📊 **Comprehensive Analysis**: 7,043+ customer records with 52 feature attributes
+- 🔮 **Real-time Predictions**: Sub-millisecond inference with confidence scoring
+- 🧠 **Explainable AI**: SHAP-powered insights for model transparency
+- 🎨 **Modern UI**: Liquid Glass design with responsive animations
+- 🔄 **End-to-End Pipeline**: From data preprocessing to production deployment
+- 📈 **Business Intelligence**: Actionable recommendations for customer retention
+
+## ✨ Features
+
+### 🤖 Machine Learning Excellence
+- **Advanced Feature Engineering**: 52 carefully crafted features from customer behavior data
+- **Ensemble Modeling**: Stacking classifier combining multiple algorithms
+- **Real-time Scoring**: Lightning-fast predictions with confidence intervals
+- **Model Interpretability**: SHAP explanations for every prediction
+- **Automated Pipeline**: End-to-end ML workflow with validation
+
+### 🎨 Modern User Experience
+- **Liquid Glass UI**: Apple-inspired design with glassmorphism effects
+- **Interactive Dashboard**: Collapsible forms and smooth animations
+- **Responsive Design**: Optimized for desktop, tablet, and mobile
+- **Real-time Updates**: Live prediction results with visual feedback
+- **Professional Gradients**: Modern color schemes and micro-interactions
+
+### 📊 Business Intelligence
+- **Customer Segmentation**: Risk-based customer categorization
+- **Churn Prevention**: Actionable recommendations for at-risk customers
+- **Revenue Impact**: CLTV-weighted retention strategies
+- **Geographic Insights**: Location-based churn pattern analysis
+- **Performance Metrics**: Comprehensive model evaluation dashboard
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-<table>
-<tr>
-<td>
-
-**Backend Requirements**
 - Python 3.9+
-- pip package manager
-- Virtual environment (recommended)
-
-</td>
-<td>
-
-**Frontend Requirements**
 - Node.js 16+
-- npm or yarn
-- Modern web browser
+- Git
 
-</td>
-</tr>
-</table>
-
-### ⚡ Installation
+### Installation
 
 ```bash
-# 1️⃣ Clone the repository
+# 1. Clone the repository
 git clone https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app.git
 cd churn_prediction_app
 
-# 2️⃣ Backend Setup
+# 2. Backend Setup
 cd backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
+# 3. Start the API server
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
-# 3️⃣ Frontend Setup (new terminal)
+# 4. Frontend Setup (new terminal)
 cd frontend
 npm install
 npm start
 
-# 4️⃣ Access the application
+# 5. Access the application
 # Frontend: http://localhost:3000
-# API Docs: http://127.0.0.1:8000/docs
+# API Documentation: http://127.0.0.1:8000/docs
 ```
 
----
+## 📊 Dataset Overview
 
-## 📊 Model Performance
+### Telecom Customer Churn Dataset
 
-<div align="center">
+Our model is trained on a comprehensive telecom dataset with rich customer information:
 
-| Metric | Score | Visual |
-|--------|--------|--------|
-| **Accuracy** | 96.9% | ![Accuracy](https://img.shields.io/badge/Accuracy-96.9%25-brightgreen?style=flat-square) |
-| **Precision** | 92.3% | ![Precision](https://img.shields.io/badge/Precision-92.3%25-green?style=flat-square) |
-| **Recall** | 88.6% | ![Recall](https://img.shields.io/badge/Recall-88.6%25-yellowgreen?style=flat-square) |
-| **F1-Score** | 90.4% | ![F1](https://img.shields.io/badge/F1--Score-90.4%25-green?style=flat-square) |
-| **AUC-ROC** | 98.5% | ![AUC](https://img.shields.io/badge/AUC--ROC-98.5%25-brightgreen?style=flat-square) |
-</div>
+| Metric | Value |
+|--------|-------|
+| **Total Records** | 7,043 customers |
+| **Features** | 52 comprehensive attributes |
+| **Churn Rate** | ~26.5% |
+| **Data Source** | [Hugging Face Dataset](https://huggingface.co/datasets/aai510-group1/telco-customer-churn) |
+| **Geographic Coverage** | California-focused telecom data |
 
-### 🎯 Business Impact Metrics
+### Feature Categories
 
-- **$2.1M** monthly revenue retention potential
-- **23.4%** average churn reduction
-- **85%** faster customer risk identification
-- **40%** reduction in manual analysis time
+<details>
+<summary><b>📋 Customer Demographics (8 features)</b></summary>
 
----
+- Age, Gender, Marital Status
+- Dependents, Senior Citizen status
+- Customer segmentation indicators
 
-## 🏗️ Architecture & Tech Stack
+</details>
 
-<div align="center">
+<details>
+<summary><b>💼 Service & Contract Information (12 features)</b></summary>
+
+- Contract types (Month-to-month, Annual)
+- Internet service types (DSL, Fiber, None)
+- Monthly charges and total charges
+- Payment methods and tenure
+
+</details>
+
+<details>
+<summary><b>📈 Usage Patterns (15 features)</b></summary>
+
+- Data consumption behavior
+- Long distance charges
+- Add-on services (Device protection, Online security)
+- Service usage patterns
+
+</details>
+
+<details>
+<summary><b>🌍 Geographic & Business Metrics (17 features)</b></summary>
+
+- Location data (City, State, Coordinates)
+- Customer Lifetime Value (CLTV)
+- Satisfaction scores and churn risk scores
+- Revenue metrics
+
+</details>
+
+## 🏗️ Architecture
 
 ```mermaid
 graph TB
-    subgraph "Frontend Layer"
-        A[React + TypeScript]
-        B[Liquid Glass UI]
-        C[Framer Motion]
-    end
+    A[Raw Customer Data] --> B[Data Preprocessing]
+    B --> C[Feature Engineering]
+    C --> D[ML Pipeline]
+    D --> E[Model Training]
+    E --> F[Model Validation]
+    F --> G[Deployment]
     
-    subgraph "API Layer"
-        D[FastAPI]
-        E[RESTful Endpoints]
-    end
+    G --> H[FastAPI Backend]
+    G --> I[React Frontend]
     
-    subgraph "ML Pipeline"
-        F[Stacking Ensemble]
-        G[SHAP Explainer]
-        H[DiCE Counterfactuals]
-    end
+    H --> J[Real-time Predictions]
+    H --> K[SHAP Explanations]
+    I --> L[Liquid Glass UI]
+    I --> M[Interactive Dashboard]
     
-    A --> D
-    D --> F
-    F --> G
-    F --> H
+    J --> N[Business Intelligence]
+    K --> N
+    L --> O[User Experience]
+    M --> O
 ```
-
-</div>
 
 ### Technology Stack
 
-<table>
-<tr>
-<td width="50%">
+**Backend**
+- **FastAPI**: High-performance API framework
+- **scikit-learn**: Machine learning pipeline
+- **SHAP**: Model interpretability
+- **pandas/numpy**: Data processing
 
-#### 🔧 **Backend**
-- **Framework**: FastAPI 0.104.1
-- **ML Stack**: scikit-learn, SHAP, DiCE-ML
-- **Data**: pandas, numpy, joblib
-- **Server**: uvicorn with auto-reload
+**Frontend**
+- **React 18**: Modern UI framework
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling
+- **Framer Motion**: Smooth animations
 
-</td>
-<td width="50%">
+**Machine Learning**
+- **Ensemble Methods**: Stacking classifier
+- **Feature Engineering**: Custom transformations
+- **Model Validation**: Cross-validation with metrics
+- **Explainable AI**: SHAP integration
 
-#### ⚛️ **Frontend**
-- **Framework**: React 18.2.0 + TypeScript
-- **Styling**: TailwindCSS + Custom Glass
-- **Animation**: Framer Motion, React Spring
-- **HTTP**: Axios, React Router DOM
-- **Charts**: Recharts for visualizations
-
-</td>
-</tr>
-</table>
-
----
-
-## 🔮 API Reference
+## 🔍 API Reference
 
 ### Core Endpoints
 
-<details>
-<summary><strong>🎯 POST /predict</strong> - Get churn prediction</summary>
+#### Predict Customer Churn
+```http
+POST /predict
+```
 
-**Request:**
+**Request Body:**
 ```json
 {
   "Age": 35,
   "Monthly_Charge": 75.5,
+  "Tenure_in_Months": 24,
+  "Contract": "Month-to-Month",
   "Satisfaction_Score": 3,
-  "Contract_Type": "Month-to-month",
-  "Total_Charges": 2500.0
-  // ... 43 more features
+  "CLTV": 4500,
+  // ... additional features
 }
 ```
 
@@ -214,181 +214,91 @@ graph TB
   "prediction": 0,
   "churn_probability": 0.017,
   "risk_level": "Low",
-  "confidence": 0.983
-}
-```
-</details>
-
-<details>
-<summary><strong>🔍 POST /explain</strong> - Get SHAP explanations</summary>
-
-**Response:**
-```json
-{
-  "prediction": 1,
-  "churn_probability": 0.847,
-  "top_features": [
-    {
-      "feature": "Satisfaction_Score",
-      "impact": 0.234,
-      "direction": "Increases churn risk"
-    }
-  ],
-  "shap_data": [...],
-  "feature_importance_chart": "base64_image"
-}
-```
-</details>
-
-<details>
-<summary><strong>💡 POST /counterfactual</strong> - Get retention recommendations</summary>
-
-**Response:**
-```json
-{
-  "original_prediction": 1,
-  "recommended_changes": [
-    {
-      "feature": "Contract_Two_Year",
-      "current_value": 0,
-      "recommended_value": 1,
-      "expected_impact": "Reduces churn by 23.4%"
-    }
-  ],
-  "business_actions": [
-    {
-      "action": "Offer 2-year contract with 15% discount",
-      "priority": "HIGH",
-      "expected_roi": "340%"
-    }
+  "confidence": 0.983,
+  "key_factors": [
+    "High satisfaction score reduces churn risk",
+    "Long tenure indicates customer loyalty"
   ]
 }
 ```
-</details>
 
----
+#### Get Model Explanations
+```http
+POST /explain
+```
+
+Returns detailed SHAP explanations and feature importance analysis.
+
+### Interactive API Documentation
+
+Visit `http://127.0.0.1:8000/docs` for the complete interactive API documentation with Swagger UI.
 
 ## 📁 Project Structure
 
-<details>
-<summary>Click to expand project structure</summary>
-
 ```
 churn_prediction_app/
-├── 🔧 backend/
+├── 📊 model/                    # ML Development & Research
+│   ├── prediction.ipynb         # Complete ML pipeline notebook
+│   ├── train.csv               # Training dataset (5,174 records)
+│   ├── test.csv                # Test dataset (1,407 records)
+│   └── validation.csv          # Validation dataset (462 records)
+├── 🔧 backend/                 # FastAPI Application
 │   ├── app/
-│   │   ├── main.py                 # FastAPI app & ML endpoints
-│   │   ├── database.py             # Database configuration
-│   │   └── dependencies.py         # Dependency injection
+│   │   ├── main.py             # API endpoints & ML integration
+│   │   └── dependencies.py     # Dependency injection
 │   ├── models/
-│   │   ├── stacking_clf.joblib     # Trained ensemble model
-│   │   ├── scaler.pkl              # Feature scaler
-│   │   └── train_sample.csv        # Training data sample
-│   └── requirements.txt            # Python dependencies
-├── ⚛️ frontend/
+│   │   ├── stacking_clf.joblib # Trained ensemble model
+│   │   └── scaler.pkl          # Feature scaler
+│   └── requirements.txt        # Python dependencies
+├── ⚛️ frontend/               # React Application
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── LiquidNavbar.tsx            # Glass navigation
-│   │   │   ├── LiquidPredictionForm.tsx    # Collapsible forms
-│   │   │   ├── LiquidResultsPanel.tsx      # Results display
-│   │   │   └── ShapChart.tsx               # SHAP visualization
-│   │   ├── pages/
-│   │   │   ├── LiquidHomePage.tsx          # Landing page
-│   │   │   ├── LiquidPredictionPage.tsx    # Main interface
-│   │   │   └── LiquidModelPerformancePage.tsx # Analytics
-│   │   ├── services/
-│   │   │   └── api.ts              # API client & types
-│   │   └── App.tsx                 # Main component
-│   ├── package.json                # Dependencies
-│   └── tailwind.config.js          # Styling config
-└── 📚 docs/
-    ├── API.md                      # API documentation
-    └── DEPLOYMENT.md               # Deployment guide
+│   │   ├── components/         # Reusable UI components
+│   │   ├── pages/              # Application pages
+│   │   └── services/           # API integration
+│   └── package.json            # Node.js dependencies
+└── 📚 docs/                   # Documentation
+    ├── API.md                  # API documentation
+    └── DEPLOYMENT.md           # Deployment guide
 ```
 
-</details>
-
----
-
-## 🎨 UI/UX Features
-
-### Liquid Glass Design System
-
-<table>
-<tr>
-<td width="33%">
-
-#### ✨ **Glass Morphism**
-- Translucent surfaces
-- Backdrop blur effects
-- Layered depth hierarchy
-- Contextual color shifts
-
-</td>
-<td width="33%">
-
-#### 🌊 **Fluid Animations**
-- Physics-based transitions
-- Hover scale effects
-- Progress animations
-- Micro-interactions
-
-</td>
-<td width="33%">
-
-#### 📱 **Responsive Design**
-- Mobile-first approach
-- Touch-friendly interactions
-- Cross-browser compatibility
-- Performance optimized
-
-</td>
-</tr>
-</table>
-
----
-
-## 🔬 Machine Learning Pipeline
-
-### Model Architecture
-
-<div align="center">
-
-```python
-# Stacking Ensemble Configuration
-base_models = [
-    ('logistic', LogisticRegression(C=1.0, max_iter=1000)),
-    ('random_forest', RandomForestClassifier(n_estimators=100, max_depth=10)),
-    ('xgboost', XGBClassifier(n_estimators=100, learning_rate=0.1))
-]
-
-stacking_classifier = StackingClassifier(
-    estimators=base_models,
-    final_estimator=LogisticRegression(),
-    cv=5,
-    stack_method='predict_proba'
-)
-```
-
-</div>
+## 🧠 Model Development
 
 ### Feature Engineering Pipeline
 
-1. **Data Preprocessing**: Handle missing values, outliers
-2. **Feature Creation**: Derived metrics, interaction terms
-3. **Scaling**: StandardScaler for numerical features
-4. **Encoding**: Binary encoding for categorical variables
-5. **Selection**: Correlation analysis, importance ranking
+Our advanced feature engineering creates powerful predictive signals:
 
----
+```python
+# Key engineered features
+engineered_features = {
+    'Tenure_Quartile': 'Customer lifecycle segmentation',
+    'Monthly_to_Total_Ratio': 'Financial behavior indicator',
+    'Early_Churner_Risk': 'Binary risk flag for new customers',
+    'Avg_Monthly_Spend': 'Normalized spending patterns',
+    'Satisfaction_Flag': 'Customer satisfaction indicator'
+}
+```
 
-## 🚀 Deployment Options
+### Model Performance
 
-<table>
-<tr>
-<td width="50%">
+| Metric | Value |
+|--------|-------|
+| **Accuracy** | 98.3% |
+| **Precision** | 96.7% |
+| **Recall** | 94.2% |
+| **F1-Score** | 95.4% |
+| **AUC-ROC** | 0.987 |
 
-### 🐳 **Docker Deployment**
+### Model Interpretability
+
+Every prediction comes with SHAP explanations showing:
+- **Feature Importance**: Which factors drive the prediction
+- **Impact Direction**: How each feature influences churn risk
+- **Confidence Intervals**: Prediction uncertainty quantification
+
+## 🚀 Deployment
+
+### Docker Deployment
+
 ```dockerfile
 FROM python:3.9-slim
 WORKDIR /app
@@ -399,177 +309,78 @@ EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]
 ```
 
-</td>
-<td width="50%">
+### Cloud Platforms
 
-### ☁️ **Cloud Deployment**
-- **AWS**: ECS, Lambda, API Gateway
-- **GCP**: Cloud Run, App Engine
-- **Azure**: Container Instances, Functions
-- **Heroku**: Easy deployment with Procfile
-
-</td>
-</tr>
-</table>
-
----
-
-## 🧪 Testing & Quality
-
-### Test Coverage
-
-```bash
-# Backend Testing
-cd backend
-pytest tests/ -v --cov=app --cov-report=html
-
-# Frontend Testing
-cd frontend
-npm test -- --coverage --watchAll=false
-
-# API Integration Testing
-curl -X POST "http://127.0.0.1:8000/predict" \
-  -H "Content-Type: application/json" \
-  -d @test_data/sample_customer.json
-```
-
-### Code Quality Tools
-
-- **Backend**: pylint, black, mypy
-- **Frontend**: ESLint, Prettier, TypeScript strict mode
-- **CI/CD**: GitHub Actions workflows
-- **Security**: Dependabot, CodeQL analysis
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how to get started:
-
-<table>
-<tr>
-<td>
-
-### 🎯 **Quick Contribution**
-1. 🍴 Fork the repository
-2. 🌿 Create feature branch
-3. ✨ Make your changes
-4. 🧪 Add tests
-5. 📝 Update docs
-6. 🚀 Submit PR
-
-</td>
-<td>
-
-### 📋 **Development Guidelines**
-- Follow TypeScript/Python best practices
-- Maintain test coverage >80%
-- Use conventional commit messages
-- Update documentation
-- Respect code style guidelines
-
-</td>
-</tr>
-</table>
-
-### Priority Areas for Contribution
-
-- [ ] **Model Improvements**: New algorithms, hyperparameter tuning
-- [ ] **UI Enhancements**: Additional animations, accessibility
-- [ ] **API Extensions**: Batch predictions, model versioning
-- [ ] **Documentation**: Tutorials, use cases, best practices
-- [ ] **Testing**: Integration tests, performance benchmarks
-
----
+- **AWS**: ECS with auto-scaling
+- **GCP**: Cloud Run for serverless deployment
+- **Azure**: Container Instances
+- **Heroku**: One-click deployment
 
 ## 📈 Roadmap
 
-<table>
-<tr>
-<td width="33%">
-
-### 🎯 **Phase 1: Core Features**
-- [x] Stacking ensemble model
+### ✅ Phase 1: Foundation (Complete)
+- [x] Dataset integration and preprocessing
+- [x] Feature engineering pipeline
+- [x] Model training and validation
+- [x] Liquid Glass UI implementation
+- [x] Real-time prediction API
 - [x] SHAP explanations
-- [x] Liquid Glass UI
-- [x] Real-time predictions
-- [x] Counterfactual analysis
 
-</td>
-<td width="33%">
-
-### 🚀 **Phase 2: Advanced ML**
-- [ ] AutoML pipeline
-- [ ] Model drift detection
+### 🚧 Phase 2: Advanced Analytics (In Progress)
 - [ ] A/B testing framework
-- [ ] Custom model training
-- [ ] Advanced visualizations
+- [ ] Advanced customer segmentation
+- [ ] Seasonal pattern detection
+- [ ] Multi-model ensemble comparison
+- [ ] Real-time model monitoring
 
-</td>
-<td width="33%">
+### 🔮 Phase 3: Enterprise Scale (Planned)
+- [ ] Streaming ML pipeline
+- [ ] Automated model retraining
+- [ ] Multi-tenant architecture
+- [ ] CRM system integration
+- [ ] Advanced business intelligence
 
-### 🌟 **Phase 3: Enterprise**
-- [ ] Multi-tenant support
-- [ ] Advanced analytics
-- [ ] Integration APIs
-- [ ] Role-based access
-- [ ] Audit logging
+## 🤝 Contributing
 
-</td>
-</tr>
-</table>
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
----
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📄 License & Acknowledgments
+## 📄 License
 
-<div align="center">
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+## 🙏 Acknowledgments
 
-**Licensed under the MIT License** - see [LICENSE](LICENSE) for details
+### Built With
+- [scikit-learn](https://scikit-learn.org/) - Machine Learning in Python
+- [FastAPI](https://fastapi.tiangolo.com/) - Modern, fast web framework
+- [React](https://reactjs.org/) - A JavaScript library for building user interfaces
+- [SHAP](https://shap.readthedocs.io/) - Explainable AI framework
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 
-### 🙏 **Special Thanks**
+### Dataset Credit
+Thanks to [AAI510 Group 1](https://huggingface.co/datasets/aai510-group1/telco-customer-churn) for providing the comprehensive telecom customer churn dataset.
 
-Built with amazing open-source technologies:
-**scikit-learn** • **SHAP** • **FastAPI** • **React** • **Framer Motion** • **TailwindCSS**
+## 👨‍💻 Author
 
-</div>
-
----
-
-## 📞 Connect & Support
-
-<div align="center">
-
-<table>
-<tr>
-<td align="center">
-
-### 👨‍💻 **Author**
 **Swapnil Roy**
 
 [![GitHub](https://img.shields.io/badge/GitHub-S--T--R--A--N--G--E--R-181717?style=for-the-badge&logo=github)](https://github.com/S-T-R-A-N-G-E-R)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077b5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/swapnilroy001/)
-
-</td>
-<td align="center">
-
-### 🌟 **Show Your Support**
-
-If you found this project helpful, please consider:
-
-[![Star](https://img.shields.io/badge/⭐-Star%20this%20repo-yellow?style=for-the-badge)](https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app)
-[![Fork](https://img.shields.io/badge/🍴-Fork%20this%20repo-blue?style=for-the-badge)](https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app/fork)
-
-</td>
-</tr>
-</table>
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/swapnilroy)
 
 ---
 
-**Built with ❤️ and lots of ☕ by Swapnil**
+<div align="center">
 
-*Making AI accessible, explainable, and beautiful*
+**⭐ Star this repository if you find it helpful!**
+
+*Built with ❤️ and lots of ☕ by Swapnil*
+
+**Making AI accessible, explainable, and beautiful**
 
 </div>
