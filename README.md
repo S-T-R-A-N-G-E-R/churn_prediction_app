@@ -482,12 +482,6 @@ gantt
 
 **We'd love your contribution! Here's how to get started:**
 
-[![Contributors](https://img.shields.io/github/contributors/S-T-R-A-N-G-E-R/churn_prediction_app?style=for-the-badge)](https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app/graphs/contributors)
-[![Issues](https://img.shields.io/github/issues/S-T-R-A-N-G-E-R/churn_prediction_app?style=for-the-badge)](https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/S-T-R-A-N-G-E-R/churn_prediction_app?style=for-the-badge)](https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app/pulls)
-
-</div>
-
 ### 🌟 How to Contribute
 
 1. **🍴 Fork** the repository
@@ -498,16 +492,11 @@ gantt
 
 ### 🏆 Recognition
 
-<div align="center">
-
 **Top Contributors**
 
-<a href="https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=S-T-R-A-N-G-E-R/churn_prediction_app" />
-</a>
+*(Contributor list will be available once the repository is initialized.)*
 
 </div>
-
 ---
 
 ## 📄 License & Acknowledgments
