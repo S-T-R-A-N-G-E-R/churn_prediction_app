@@ -3,14 +3,14 @@
 <div align="center">
 
 <!-- Hero Banner with Gradient -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=Churn%20Prediction%20AI&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200§ion=header&text=Churn%20Prediction%20AI&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" width="100%"/>
 
 <!-- Dynamic Badges -->
 ![Churn Prediction](https://img.shields.io/badge/🤖_ML-Churn%20Prediction-ff6b6b?style=for-the-badge&logoColor=white)
 ![Python](https://img.shields.io/badge/🐍_Python-3.9+-3776ab?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/⚡_FastAPI-0.104.1-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/⚛️_React-18.2.0-61dafb?style=for-the-badge&logo=react&logoColor=white)
-![Accuracy](https://img.shields.io/badge/🎯_Accuracy-98.3%25-00d4aa?style=for-the-badge)
+![Accuracy](https://img.shields.io/badge/🎯_Accuracy-96.9%25-00d4aa?style=for-the-badge)
 
 <br/>
 
@@ -18,8 +18,6 @@
 
 <br/>
 
-[![🎯 Live Demo](https://img.shields.io/badge/🎯-Live%20Demo-ff6b6b?style=for-the-badge&logoColor=white)](https://your-demo-link.com)
-[![📖 Documentation](https://img.shields.io/badge/📖-Documentation-blue?style=for-the-badge)](https://your-docs-link.com)
 [![🤝 Contribute](https://img.shields.io/badge/🤝-Contribute-green?style=for-the-badge)](https://github.com/S-T-R-A-N-G-E-R/churn_prediction_app/contribute)
 
 </div>
@@ -32,9 +30,8 @@
 <tr>
 <td width="50%">
 
-### 🎯 **Unmatched Accuracy**
-- **98.3%** prediction accuracy
-- Real-time inference in **<1ms**
+### 🎯 **High Accuracy**
+- **96.9%** prediction accuracy
 - Advanced ensemble modeling
 - Confidence scoring system
 
@@ -62,7 +59,7 @@
 <td width="50%">
 
 ### 📊 **Rich Dataset**
-- **7,043+** customer records
+- **7,043** customer records
 - **52** engineered features
 - Geographic & behavioral data
 - Business intelligence ready
@@ -77,9 +74,9 @@
 
 <div align="center">
 
-| Dashboard Overview | Prediction Interface | Analytics View |
+| Dashboard Overview | Prediction Interface | SHAP Analysis |
 |:--:|:--:|:--:|
-| ![Dashboard](https://via.placeholder.com/250x150/667eea/ffffff?text=Dashboard) | ![Prediction](https://via.placeholder.com/250x150/f093fb/ffffff?text=Prediction) | ![Analytics](https://via.placeholder.com/250x150/4facfe/ffffff?text=Analytics) |
+| ![Dashboard](./assets/screenshots/performance-dashboard.png) | ![Prediction](./assets/screenshots/prediction-interface.png) | ![SHAP](./assets/screenshots/shap-analysis.png) |
 
 *Screenshots showcase the modern Liquid Glass UI with real-time predictions and comprehensive analytics*
 
@@ -154,13 +151,13 @@ graph TB
     subgraph "ML Pipeline"
         C --> D[🤖 Model Training<br/>Ensemble Methods]
         D --> E[✅ Validation<br/>Cross-validation]
-        E --> F[📊 Performance<br/>98.3% Accuracy]
+        E --> F[📊 Performance<br/>96.9% Accuracy]
     end
     
     subgraph "Backend Services"
         F --> G[⚡ FastAPI<br/>Real-time API]
         G --> H[🔍 SHAP Explainer<br/>Model Insights]
-        G --> I[💾 Model Serving<br/>Sub-ms Inference]
+        G --> I[💾 Model Serving]
     end
     
     subgraph "Frontend Experience"
@@ -183,13 +180,12 @@ graph TB
 <td><b>🧠 Machine Learning</b></td>
 <td><b>⚡ Backend</b></td>
 <td><b>🎨 Frontend</b></td>
-<td><b>🔧 DevOps</b></td>
 </tr>
 <tr>
 <td>
 
 - scikit-learn
-- SHAP
+- xgboost
 - pandas/numpy
 - joblib
 
@@ -197,7 +193,6 @@ graph TB
 <td>
 
 - FastAPI
-- Pydantic
 - Uvicorn
 - Python 3.9+
 
@@ -207,15 +202,6 @@ graph TB
 - React 18
 - TypeScript
 - Tailwind CSS
-- Framer Motion
-
-</td>
-<td>
-
-- Docker
-- GitHub Actions
-- pytest
-- pre-commit
 
 </td>
 </tr>
@@ -279,19 +265,19 @@ Revenue Metrics, Geographic Coordinates, City, State
 <table>
 <tr>
 <td align="center">
-<img src="https://img.shields.io/badge/Accuracy-98.3%25-00d4aa?style=for-the-badge&logo=target&logoColor=white"/>
+<img src="https://img.shields.io/badge/Accuracy-96.9%25-00d4aa?style=for-the-badge&logo=target&logoColor=white"/>
 <br/><b>Overall Accuracy</b>
 </td>
 <td align="center">
-<img src="https://img.shields.io/badge/Precision-96.7%25-ff6b6b?style=for-the-badge&logo=bullseye&logoColor=white"/>
+<img src="https://img.shields.io/badge/Precision-97.0%25-ff6b6b?style=for-the-badge&logo=bullseye&logoColor=white"/>
 <br/><b>Precision Score</b>
 </td>
 <td align="center">
-<img src="https://img.shields.io/badge/Recall-94.2%25-667eea?style=for-the-badge&logo=search&logoColor=white"/>
+<img src="https://img.shields.io/badge/Recall-92.0%25-667eea?style=for-the-badge&logo=search&logoColor=white"/>
 <br/><b>Recall Score</b>
 </td>
 <td align="center">
-<img src="https://img.shields.io/badge/F1_Score-95.4%25-f093fb?style=for-the-badge&logo=chart-line&logoColor=white"/>
+<img src="https://img.shields.io/badge/F1_Score-94.0%25-f093fb?style=for-the-badge&logo=chart-line&logoColor=white"/>
 <br/><b>F1-Score</b>
 </td>
 </tr>
@@ -301,10 +287,11 @@ Revenue Metrics, Geographic Coordinates, City, State
 
 | Model | Accuracy | Precision | Recall | F1-Score |
 |-------|:--------:|:---------:|:------:|:--------:|
-| **🏆 Stacking Ensemble** | **98.3%** | **96.7%** | **94.2%** | **95.4%** |
-| Random Forest | 94.1% | 92.3% | 89.7% | 90.9% |
-| XGBoost | 93.8% | 91.5% | 88.9% | 90.2% |
-| Logistic Regression | 89.2% | 87.1% | 84.3% | 85.7% |
+| **🏆 Stacking Ensemble** | **96.9%** | **97.0%** | **92.0%** | **94.0%** |
+| Voting Classifier | 96.7% | 98.0% | 90.0% | 94.0% |
+| Random Forest | 95.8% | 98.0% | 86.0% | 92.0% |
+| XGBoost | 96.0% | 94.0% | 91.0% | 92.0% |
+| Logistic Regression | 96.7% | 96.0% | 91.0% | 94.0% |
 
 </div>
 
@@ -337,10 +324,9 @@ Revenue Metrics, Geographic Coordinates, City, State
   "prediction": 0,
   "churn_probability": 0.017,
   "risk_level": "🟢 Low Risk",
-  "confidence": 98.3,
-  "prediction_time_ms": 0.8,
+  "confidence": 96.9,
   "key_factors": [
-    "✅ High satisfaction score reduces churn risk by 23%",
+    "✅ High satisfaction score reduces churn risk",
     "✅ Long tenure indicates strong customer loyalty",
     "⚠️ Month-to-month contract increases flexibility risk"
   ],
@@ -379,105 +365,57 @@ Health check endpoint with model performance metrics and system status.
 
 ```
 churn_prediction_app/
-├── 🧠 model/                      # ML Development Hub
-│   ├── 📓 prediction.ipynb        # Complete ML pipeline & experiments
-│   ├── 📊 train.csv              # Training dataset (5,174 records)
-│   ├── 🧪 test.csv               # Test dataset (1,407 records)
-│   └── ✅ validation.csv         # Validation dataset (462 records)
+├── README.md                              # Project documentation
+├── LICENSE                                # License file
 │
-├── ⚡ backend/                    # FastAPI Power Engine
-│   ├── 🚀 app/
-│   │   ├── main.py               # API endpoints & ML integration
-│   │   ├── models.py             # Pydantic models & schemas
-│   │   └── services.py           # Business logic & utilities
-│   ├── 🤖 models/
-│   │   ├── stacking_clf.joblib   # Trained ensemble model
-│   │   └── scaler.pkl            # Feature scaler
-│   └── 📋 requirements.txt       # Python dependencies
+├── assets/                               # Project assets and media
+│   └── screenshots/                      # Application screenshots
+│       ├── prediction-interface.png     # Main prediction page screenshot
+│       ├── performance-dashboard.png    # Model performance dashboard
+│       └── shap-analysis.png           # SHAP feature importance visualization
 │
-├── ⚛️ frontend/                  # React Experience Layer
-│   ├── 🎨 src/
-│   │   ├── components/           # Reusable UI components
-│   │   │   ├── PredictionForm/   # Liquid Glass form
-│   │   │   ├── Dashboard/        # Analytics dashboard
-│   │   │   └── common/           # Shared components
-│   │   ├── 📄 pages/             # Application pages
-│   │   ├── 🔧 services/          # API integration layer
-│   │   └── 🎭 styles/            # Custom CSS & animations
-│   └── 📦 package.json           # Node.js dependencies
+├── model/                               # ML model development and data
+│   ├── prediction.ipynb                # Main Jupyter notebook for model training
+│   ├── train.csv                       # Training dataset
+│   ├── test.csv                        # Test dataset
+│   └── validation.csv                  # Validation dataset
 │
-├── 🐳 docker/                    # Containerization
-│   ├── Dockerfile.backend        # Backend container
-│   ├── Dockerfile.frontend       # Frontend container
-│   └── docker-compose.yml        # Multi-service orchestration
+├── backend/                            # FastAPI Python backend
+│   ├── app/
+│   │   └── main.py                     # FastAPI application with ML endpoints
+│   ├── models/                         # Trained model artifacts
+│   │   ├── stacking_clf.joblib         # Trained stacking ensemble model
+│   │   ├── scaler.pkl                  # Feature scaler
+│   │   └── train_sample.csv            # Sample training data
+│   ├── requirements.txt                # Python dependencies
+│   ├── venv/                          # Virtual environment (local)
+│   └── .env                           # Environment variables (local)
 │
-├── 📚 docs/                      # Documentation Hub
-│   ├── 📖 API.md                 # Comprehensive API guide
-│   ├── 🚀 DEPLOYMENT.md          # Deployment strategies
-│   └── 🏗️ ARCHITECTURE.md       # System architecture deep-dive
-│
-└── 🧪 tests/                     # Quality Assurance
-    ├── backend/                  # Backend test suites
-    ├── frontend/                 # Frontend test suites
-    └── integration/              # End-to-end tests
+└── frontend/                          # React TypeScript frontend
+    ├── public/
+    │   ├── index.html                  # Main HTML template
+    │   ├── favicon.ico                 # App icon
+    │   └── manifest.json               # PWA manifest
+    ├── src/
+    │   ├── components/                 # Reusable UI components
+    │   │   ├── LiquidNavbar.tsx        # Floating glass navigation
+    │   │   ├── LiquidPredictionForm.tsx # Collapsible form sections
+    │   │   ├── LiquidResultsPanel.tsx  # Results display with tabs
+    │   │   └── ShapChart.tsx           # SHAP visualization component
+    │   ├── pages/                      # Page components
+    │   │   ├── LiquidHomePage.tsx      # Landing page
+    │   │   ├── LiquidPredictionPage.tsx # Main prediction interface
+    │   │   └── LiquidModelPerformancePage.tsx # Analytics dashboard
+    │   ├── services/
+    │   │   └── api.ts                  # API client and TypeScript types
+    │   ├── App.tsx                     # Main application component
+    │   ├── index.tsx                   # React entry point
+    │   └── index.css                   # Global styles with glass morphism
+    ├── package.json                    # Node.js dependencies and scripts
+    ├── package-lock.json              # Locked dependency versions
+    ├── tailwind.config.js             # Tailwind CSS configuration
+    └── tsconfig.json                   # TypeScript configuration
 ```
-
----
-
-## 🚀 Deployment Options
-
-<div align="center">
-
-### 🌐 Cloud Platforms
-
-<table>
-<tr>
-<td align="center">
-<img src="https://img.shields.io/badge/AWS-ECS_Deploy-ff6b6b?style=for-the-badge&logo=amazon-aws&logoColor=white"/>
-<br/><b>Auto-scaling Ready</b>
-</td>
-<td align="center">
-<img src="https://img.shields.io/badge/GCP-Cloud_Run-667eea?style=for-the-badge&logo=google-cloud&logoColor=white"/>
-<br/><b>Serverless Deployment</b>
-</td>
-<td align="center">
-<img src="https://img.shields.io/badge/Azure-Container_Instances-00d4aa?style=for-the-badge&logo=microsoft-azure&logoColor=white"/>
-<br/><b>Enterprise Ready</b>
-</td>
-</tr>
-</table>
-
-</div>
-
-<details>
-<summary><b>🐳 Docker Deployment</b></summary>
-
-```dockerfile
-# Multi-stage optimized build
-FROM python:3.9-slim as backend
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-```bash
-# Quick Docker deployment
-docker-compose up -d
-```
-
-</details>
-
-<details>
-<summary><b>☁️ One-Click Cloud Deploy</b></summary>
-
-[![Deploy to Heroku](https://img.shields.io/badge/Deploy%20to-Heroku-7056bf?style=for-the-badge&logo=heroku&logoColor=white)](https://heroku.com/deploy)
-[![Deploy to Railway](https://img.shields.io/badge/Deploy%20to-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app)
-[![Deploy to Vercel](https://img.shields.io/badge/Deploy%20to-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
-
-</details>
 
 ---
 
@@ -603,7 +541,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 <div align="center">
 
 ### **Swapnil Roy** 
-*AI/ML Engineer & Full-Stack Developer*
+*Master's Student in Data Science*
 
 <table>
 <tr>
@@ -614,12 +552,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 </td>
 <td align="center">
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/swapnilroy)
-
-</td>
-<td align="center">
-
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-FF6B6B?style=for-the-badge&logo=web&logoColor=white)](https://swapnilroy.dev)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/swapnilroy001/)
 
 </td>
 </tr>
@@ -634,7 +567,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 <div align="center">
 
 <!-- Footer Wave -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100§ion=footer" width="100%"/>
 
 ### ⭐ **Star this repository if you found it helpful!**
 
