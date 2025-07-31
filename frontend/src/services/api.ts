@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+// Use environment variable or default to localhost for development
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -34,6 +35,8 @@ export interface CustomerData {
   Online_Security: number;
   Paperless_Billing: number;
   Partner: number;
+  Payment_Method_Credit_Card: number;
+  Payment_Method_Mailed_Check: number;
   Phone_Service: number;
   Premium_Tech_Support: number;
   Referred_a_Friend: number;
@@ -43,9 +46,6 @@ export interface CustomerData {
   Streaming_Music: number;
   Streaming_TV: number;
   Unlimited_Data: number;
-  Tenure_Quartile: number;
-  Early_Churner_Risk: number;
-  Low_Satisfaction: number;
   Contract_One_Year: number;
   Contract_Two_Year: number;
   Internet_Type_DSL: number;
@@ -56,28 +56,29 @@ export interface CustomerData {
   Offer_Offer_C: number;
   Offer_Offer_D: number;
   Offer_Offer_E: number;
-  Payment_Method_Credit_Card: number;
-  Payment_Method_Mailed_Check: number;
+  Tenure_Quartile: number;
+  Early_Churner_Risk: number;
+  Low_Satisfaction: number;
 }
 
 export const churnAPI = {
-  predict: async (customerData: CustomerData) => {
-    const response = await api.post('/predict', customerData);
+  predict: async (data: CustomerData) => {
+    const response = await api.post('/predict', data);
     return response.data;
   },
-
-  explain: async (customerData: CustomerData) => {
-    const response = await api.post('/explain', customerData);
+  
+  explain: async (data: CustomerData) => {
+    const response = await api.post('/explain', data);
     return response.data;
   },
-
-  getCounterfactuals: async (customerData: CustomerData, desiredClass = 0, totalCFs = 1) => {
-    const response = await api.post(
-      `/counterfactual?desired_class=${desiredClass}&total_CFs=${totalCFs}`, 
-      customerData
-    );
+  
+  getCounterfactuals: async (data: CustomerData, desiredClass: number, totalCFs: number) => {
+    const response = await api.post('/counterfactual', {
+      ...data,
+      desired_class: desiredClass,
+      total_cfs: totalCFs
+    });
     return response.data;
-  },
+  }
 };
 
-export default churnAPI;
