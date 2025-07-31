@@ -21,10 +21,10 @@ const LiquidModelPerformancePage: React.FC = () => {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[
           { title: "Accuracy", value: "96.9%", description: "Overall prediction correctness", icon: "🎯" },
-          { title: "Precision", value: "92.3%", description: "True positives accuracy", icon: "📏" },
-          { title: "Recall", value: "88.6%", description: "True positives detection", icon: "🔍" },
-          { title: "F1 Score", value: "90.4%", description: "Harmonic mean score", icon: "⚖️" },
-          { title: "AUC-ROC", value: "98.5%", description: "Area under ROC curve", icon: "📈" },
+          { title: "Precision", value: "97.0%", description: "True positives accuracy", icon: "📏" },
+          { title: "Recall", value: "92%", description: "True positives detection", icon: "🔍" },
+          { title: "F1 Score", value: "98.0%", description: "Harmonic mean score", icon: "⚖️" },
+          { title: "AUC-ROC", value: "99.1%", description: "Area under ROC curve", icon: "📈" },
           { title: "Predictions", value: "6,862", description: "Total this month", icon: "🔮" },
         ].map((metric, index) => (
           <motion.div
