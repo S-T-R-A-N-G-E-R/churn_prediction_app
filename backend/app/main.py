@@ -15,9 +15,9 @@ from fastapi.middleware.cors import CORSMiddleware
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://churn-prediction-app.vercel.app/",
-    "https://churn-prediction-app-git-main-s-t-r-a-n-g-e-rs-projects.vercel.app/",
-    "https://churn-prediction-ed5vs8aso-s-t-r-a-n-g-e-rs-projects.vercel.app/"
+    "https://churn-prediction-app.vercel.app",
+    "https://churn-prediction-app-git-main-s-t-r-a-n-g-e-rs-projects.vercel.app",
+    "https://churn-prediction-ed5vs8aso-s-t-r-a-n-g-e-rs-projects.vercel.app"
     
 ]
 
