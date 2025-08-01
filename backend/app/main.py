@@ -8,8 +8,18 @@ import dice_ml
 from dice_ml import Dice
 import os
 from pathlib import Path
-from fastapi.middleware.cors import CORSMiddleware 
 import logging
+from fastapi.middleware.cors import CORSMiddleware 
+
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://churn-prediction-app.vercel.app/",
+    "https://churn-prediction-app-git-main-s-t-r-a-n-g-e-rs-projects.vercel.app/",
+    "https://churn-prediction-ed5vs8aso-s-t-r-a-n-g-e-rs-projects.vercel.app/"
+    
+]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,7 +28,7 @@ app = FastAPI(title="Telecom Customer Churn Predictor")
 # ✅ Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "https://churn-prediction-app-qxfw.vercel.app", "https://churn-prediction-app-git-main-s-t-r-a-n-g-e-rs-projects.vercel.app", "https://churn-prediction-czfi2sapl-s-t-r-a-n-g-e-rs-projects.vercel.app"],  # React dev server
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
