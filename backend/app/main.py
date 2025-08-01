@@ -18,9 +18,9 @@ app = FastAPI(title="Telecom Customer Churn Predictor")
 # ✅ Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "https://churn-prediction-app-qxfw.vercel.app"],  # React dev server
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "https://churn-prediction-app-qxfw.vercel.app", "churn-prediction-app-git-main-s-t-r-a-n-g-e-rs-projects.vercel.app", "churn-prediction-czfi2sapl-s-t-r-a-n-g-e-rs-projects.vercel.app"],  # React dev server
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
