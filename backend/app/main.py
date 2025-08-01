@@ -118,6 +118,12 @@ class CustomerData(BaseModel):
 
 # ... rest of your endpoints and ACTION_MAP remain the same ...
 
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+
 @app.post("/predict")
 def predict(data: CustomerData):
     input_dict = data.dict()
