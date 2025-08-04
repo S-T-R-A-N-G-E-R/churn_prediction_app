@@ -6,12 +6,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-        }
+        accent: "#16FFC9",
+        glass: "rgba(255,255,255,0.22)",
+        gradient1: "#537FE7",
+        gradient2: "#1CA7EC",
+      },
+      boxShadow: {
+        glass: "0 4px 32px 0 rgba(31, 38, 135, 0.19)",
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

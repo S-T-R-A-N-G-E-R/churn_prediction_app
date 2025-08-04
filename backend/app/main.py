@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File
 from pydantic import BaseModel
 import joblib
 import numpy as np
@@ -10,22 +10,19 @@ import os
 from pathlib import Path
 import logging
 from fastapi.middleware.cors import CORSMiddleware 
+import io
+from datetime import datetime
 
+app = FastAPI(title="Telecom Customer Churn Predictor")
 
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://churn-prediction-app.vercel.app",
     "https://churn-prediction-app-git-main-s-t-r-a-n-g-e-rs-projects.vercel.app",
-    "https://churn-prediction-ed5vs8aso-s-t-r-a-n-g-e-rs-projects.vercel.app"
-    
+    "https://churn-prediction-ed5vs8aso-s-t-r-a-n-g-e-rs-projects.vercel.app",
 ]
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-app = FastAPI(title="Telecom Customer Churn Predictor")
-
-# ✅ Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -33,6 +30,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load models and data
 scaler = joblib.load(BASE_DIR / "models" / "scaler.pkl")
@@ -51,11 +50,11 @@ df_train = pd.read_csv(BASE_DIR / "models" / "train_sample.csv")
 df_train.columns = df_train.columns.str.replace(" ", "_").str.replace("-", "_")
 
 continuous_features = [
-    'Age','Avg_Monthly_GB_Download','Avg_Monthly_Long_Distance_Charges',
-    'CLTV','Monthly_Charge','Population','Total_Extra_Data_Charges',
-    'Total_Long_Distance_Charges','Total_Refunds','Total_Revenue',
-    'Tenure_in_Months','Monthly_to_Total_Ratio','Number_of_Dependents',
-    'Number_of_Referrals','Dependents'
+    'Age', 'Avg_Monthly_GB_Download', 'Avg_Monthly_Long_Distance_Charges',
+    'CLTV', 'Monthly_Charge', 'Population', 'Total_Extra_Data_Charges',
+    'Total_Long_Distance_Charges', 'Total_Refunds', 'Total_Revenue',
+    'Tenure_in_Months', 'Monthly_to_Total_Ratio', 'Number_of_Dependents',
+    'Number_of_Referrals', 'Dependents'
 ]
 
 d_data = dice_ml.Data(
@@ -88,7 +87,7 @@ class CustomerData(BaseModel):
     Total_Refunds: float
     Total_Revenue: float
     Tenure_in_Months: float
-    Monthly_to_Total_Ratio: float  # ✅ Only once
+    Monthly_to_Total_Ratio: float
     Number_of_Dependents: float
     Number_of_Referrals: float
     Dependents: float
@@ -126,42 +125,31 @@ class CustomerData(BaseModel):
     Payment_Method_Credit_Card: int
     Payment_Method_Mailed_Check: int
 
-# ... rest of your endpoints and ACTION_MAP remain the same ...
-
 @app.get("/")
 def read_root():
-    return {"message":"Churn Prediction API is running. Use /docs for API docs."}
-
+    return {"message": "Churn Prediction API is running. Use /docs for API docs."}
 
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
-
 @app.post("/predict")
 def predict(data: CustomerData):
     input_dict = data.dict()
-    # Split into scaled and unscaled features
     X_num = pd.DataFrame([{col: input_dict[col] for col in scaled_cols}])
     X_other = pd.DataFrame([{col: input_dict[col] for col in input_dict if col not in scaled_cols}])
 
-    # Scale numeric features only
     X_num_scaled = scaler.transform(X_num)
     X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
 
-    # Concatenate features into correct order as used in training/model
     model_input = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]
 
-    # Predict
-    proba = model.predict_proba(model_input)[:,1][0]
+    proba = model.predict_proba(model_input)[:, 1][0]
     prediction = int(proba > 0.5)
     return {
         "prediction": prediction,
         "churn_probability": round(proba, 4)
     }
-
-from datetime import datetime
-from fastapi import HTTPException
 
 @app.post("/explain")
 def explain(data: CustomerData):
@@ -170,22 +158,17 @@ def explain(data: CustomerData):
         if not input_dict:
             raise HTTPException(status_code=400, detail="Empty customer data provided")
         
-        # Preprocess input exactly like in /predict
         X_num = pd.DataFrame([{col: input_dict.get(col, 0) for col in scaled_cols}])
         X_other = pd.DataFrame([{col: input_dict.get(col, 0) for col in input_dict if col not in scaled_cols}])
         
-        # Scale numeric features
         X_num_scaled = scaler.transform(X_num)
         X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
         
-        # Combine scaled and unscaled features
         input_df = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]
         
-        # Use stacked model for prediction
         proba = model.predict_proba(input_df)[:, 1][0]
         prediction = int(proba > 0.5)
         
-        # Generate SHAP explanation with error handling
         try:
             shap_values = explainer(input_df)
             logging.info(f"SHAP values shape: {shap_values.shape if hasattr(shap_values, 'shape') else 'N/A'}")
@@ -193,31 +176,28 @@ def explain(data: CustomerData):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"SHAP calculation failed: {str(e)}")
         
-        # Extract SHAP values correctly for classification
         try:
             if hasattr(shap_values, 'values'):
                 if len(shap_values.values.shape) == 3:
-                    feature_impacts = shap_values.values[0, :, 1]  # For multi-output models, class 1
+                    feature_impacts = shap_values.values[0, :, 1]
                 elif len(shap_values.values.shape) == 2:
-                    feature_impacts = shap_values.values[0, :]  # Single sample, all features
+                    feature_impacts = shap_values.values[0, :]
                 else:
                     raise ValueError("Unexpected SHAP values shape")
             else:
-                feature_impacts = shap_values[0].values  # Fallback for older SHAP versions
+                feature_impacts = shap_values[0].values
             logging.info(f"Extracted feature impacts: {feature_impacts}")
         except (IndexError, ValueError, AttributeError) as e:
             raise HTTPException(status_code=500, detail=f"SHAP value extraction failed: {str(e)}")
         
-        # Create feature contributions for ALL features
         all_feature_contributions = list(zip(input_df.columns, feature_impacts))
         top_features = sorted(all_feature_contributions, key=lambda x: abs(x[1]), reverse=True)[:10]
         
-        # Ensure SHAP data has proper numeric values (removed strict 1e-8 filter)
         shap_data = []
         for feat, impact in all_feature_contributions:
             try:
                 impact_value = float(impact) if hasattr(impact, 'item') else float(impact)
-                if impact_value != 0:  # Include all non-zero impacts
+                if impact_value != 0:
                     shap_data.append({
                         "feature": feat.replace("_", " ").title(),
                         "impact": impact_value,
@@ -225,9 +205,8 @@ def explain(data: CustomerData):
                         "abs_impact": abs(impact_value)
                     })
             except (ValueError, TypeError):
-                continue  # Skip features with conversion issues
+                continue
         
-        # Sort by absolute impact for visualization
         shap_data_sorted = sorted(shap_data, key=lambda x: x['abs_impact'], reverse=True)
         
         return {
@@ -258,15 +237,12 @@ def counterfactual(
     desired_class: int = Query(0, ge=0, le=1),
     total_CFs: int = Query(1, ge=1, le=5)
 ):
-    # 1. Build raw input_df (no scaling!)
     inp = data.dict()
     input_df = pd.DataFrame([{col: inp[col] for col in expected_features}])
     
-    # 2. Get current prediction for context
     current_prediction = model.predict(input_df)[0]
     current_proba = model.predict_proba(input_df)[:, 1][0]
     
-    # 3. Define actionable features only
     actionable_features = [
         'Monthly_Charge', 'Satisfaction_Score', 'Contract_One_Year', 'Contract_Two_Year',
         'Premium_Tech_Support', 'Device_Protection_Plan', 'Online_Security', 
@@ -275,7 +251,6 @@ def counterfactual(
     ]
     
     try:
-        # 4. Attempt DiCE counterfactual generation with actionable features
         cf_results = dice_exp.generate_counterfactuals(
             input_df,
             total_CFs=total_CFs,
@@ -285,7 +260,6 @@ def counterfactual(
             diversity_weight=0.5
         )
         
-        # 5. Extract counterfactual if successful
         cf_df = cf_results.cf_examples_list[0].final_cfs_df
         
         if cf_df.empty:
@@ -305,7 +279,6 @@ def counterfactual(
         }
         
     except Exception as dice_error:
-        # 6. Fallback: Rule-based retention strategy for high-risk customers
         fallback_actions = generate_fallback_actions(inp, current_proba)
         
         return {
@@ -319,20 +292,62 @@ def counterfactual(
             "suggested_actions": fallback_actions
         }
 
-ACTION_MAP = {
-    # ... (unchanged)
-}
+@app.post("/bulk-predict")
+async def bulk_predict(file: UploadFile = File(...)):
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only CSV files are supported.")
+
+    try:
+        data_bytes = await file.read()
+        df = pd.read_csv(io.StringIO(data_bytes.decode('utf-8')))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to read CSV file: {str(e)}")
+
+    missing_cols = [col for col in expected_features if col not in df.columns]
+    if missing_cols:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Missing columns in upload: {', '.join(missing_cols)}"
+        )
+
+    X_num = df[scaled_cols]
+    X_cat = df[[col for col in expected_features if col not in scaled_cols]]
+
+    X_num = X_num.apply(pd.to_numeric, errors='coerce')
+    X_num.fillna(X_num.mean(), inplace=True)
+
+    X_cat = X_cat.fillna(0)
+
+    X_num_scaled = scaler.transform(X_num)
+    X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
+
+    model_input = pd.concat([X_num_scaled_df, X_cat], axis=1)[expected_features]
+
+    try:
+        proba = model.predict_proba(model_input)[:, 1]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+    predictions = (proba > 0.5).astype(int)
+
+    results = []
+    for idx, (pred, p) in enumerate(zip(predictions, proba)):
+        results.append({
+            "index": int(idx),
+            "prediction": int(pred),
+            "churn_probability": float(round(p, 4))
+        })
+
+    return {"results": results}
 
 def build_actions(original, cf_row):
     actions = []
     for col, orig_val in original.items():
         cf_val = cf_row[col]
         
-        # Skip if values are identical
         if orig_val == cf_val:
             continue
             
-        # Convert to float for comparison (handle string/numeric mismatches)
         try:
             orig_numeric = float(orig_val)
             cf_numeric = float(cf_val)
@@ -356,8 +371,98 @@ def build_actions(original, cf_row):
     
     return actions
 
+ACTION_MAP = {
+    "Monthly_Charge": {
+        "decrease": "Consider offering a monthly discount to increase retention.",
+        "increase": "Provide added-value services to justify increased charges."
+    },
+    "Satisfaction_Score": {
+        "increase": "Launch a personalized reward or engagement program to raise satisfaction.",
+        "decrease": "Monitor closely; lower satisfaction signals higher churn risk."
+    },
+    "Contract_One_Year": {
+        "increase": "Offer incentives for annual contracts (e.g., upgrade, bonus services).",
+        "decrease": "Consider flexible month-to-month plans if customer is averse to commitment."
+    },
+    "Contract_Two_Year": {
+        "increase": "Upsell customers into a 2-year plan with loyalty bonuses.",
+        "decrease": "Reduce contract length for more flexibility to retain uncertain customers."
+    },
+    "Premium_Tech_Support": {
+        "increase": "Promote premium support add-ons to improve perception of responsiveness.",
+        "decrease": "Retain only if customer values cost-saving over support quality."
+    },
+    "Device_Protection_Plan": {
+        "increase": "Bundle device protection in retention offers or as a freebie.",
+        "decrease": "Unbundle or offer as optional for cost-sensitive users."
+    },
+    "Online_Security": {
+        "increase": "Highlight security benefits, possibly offer trial of upgrades.",
+        "decrease": "Offer opt-out to users who are price-focused."
+    },
+    "Online_Backup": {
+        "increase": "Showcase cloud backup reliability and convenience.",
+        "decrease": "Bundle in higher tiers only for users who need it."
+    },
+    "Streaming_Movies": {
+        "increase": "Include free months of streaming for at-risk customers.",
+        "decrease": "Suggest removing for customers who never use the feature."
+    },
+    "Streaming_TV": {
+        "increase": "Promote new, exclusive TV content to boost engagement.",
+        "decrease": "Remove or downgrade for uninterested segments."
+    },
+    "Unlimited_Data": {
+        "increase": "Upgrade customers to unlimited plans if they approach usage caps.",
+        "decrease": "Steer light users to capped/cheaper plans."
+    },
+    "Paperless_Billing": {
+        "increase": "Encourage digital billing via small incentives or environment messaging.",
+        "decrease": "Allow opt-out for users who value paper statements."
+    },
+    "Multiple_Lines": {
+        "increase": "Offer family/multi-line discounts to expand account footprint.",
+        "decrease": "Review for users who dropped lines—offer loyalty to keep others."
+    },
+    "Tenure_in_Months": {
+        "increase": "Recognize loyalty; offer long-term customer perks.",
+        "decrease": "Identify early churn risk for welcome/onboarding campaigns."
+    },
+    "Number_of_Dependents": {
+        "increase": "Support family bundles with discounts.",
+        "decrease": "Personalize offers for single users."
+    },
+    "Number_of_Referrals": {
+        "increase": "Provide referral bonuses or rewards.",
+        "decrease": "Target non-referrers with referral program awareness."
+    },
+    "Referred_a_Friend": {
+        "increase": "Send referral prompts with unique links and rewards.",
+        "decrease": "No action required unless spamming detected."
+    },
+    "Low_Satisfaction": {
+        "decrease": "Initiate customer satisfaction survey and rapid response follow-up.",
+        "increase": "Prioritize for retention intervention."
+    },
+    "Early_Churner_Risk": {
+        "decrease": "Welcome and onboard thoroughly in first few months.",
+        "increase": "Trigger enhanced onboarding and early rewards."
+    },
+    "Payment_Method_Credit_Card": {
+        "increase": "Promote autopay via credit card with reward points.",
+        "decrease": "Allow flexible payment options."
+    },
+    "Payment_Method_Mailed_Check": {
+        "increase": "Enable legacy option if preferred by some segments.",
+        "decrease": "Encourage transition to digital via incentives."
+    },
+    "Premium_Services": {
+        "increase": "Bundle multiple premium services at a discount to boost perceived value.",
+        "decrease": "Offer modular, a-la-carte options for price-sensitive users."
+    },
+}
+
 def generate_fallback_actions(customer_data, churn_probability):
-    """Generate rule-based retention actions when DiCE fails"""
     actions = []
     
     if customer_data.get('Satisfaction_Score', 5) <= 2:
