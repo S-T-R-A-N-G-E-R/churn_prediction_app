@@ -17,7 +17,8 @@ const LiquidNavbar: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Home', icon: '🏠' },
     { path: '/predict', label: 'Predict', icon: '🔮' },
-    { path: '/performance', label: 'Analytics', icon: '📊' }
+    { path: '/performance', label: 'Analytics', icon: '📊' },
+    { path: '/bulk-upload', label: 'Bulk Upload', icon: '📤' }
   ];
 
   return (
