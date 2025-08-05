@@ -1,5 +1,8 @@
-from fastapi import FastAPI, HTTPException, Query, UploadFile, File
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File, APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from . import models, schemas
+from .database import get_db
 import joblib
 import numpy as np
 import pandas as pd
@@ -13,7 +16,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import io
 from datetime import datetime
 
+from .routers import contact
+
 app = FastAPI(title="Telecom Customer Churn Predictor")
+
+app.include_router(contact.router)
+
+
 
 origins = [
     "http://localhost:3000",
@@ -124,6 +133,7 @@ class CustomerData(BaseModel):
     Offer_Offer_E: int
     Payment_Method_Credit_Card: int
     Payment_Method_Mailed_Check: int
+
 
 @app.get("/")
 def read_root():
@@ -370,6 +380,7 @@ def build_actions(original, cf_row):
             })
     
     return actions
+
 
 ACTION_MAP = {
     "Monthly_Charge": {

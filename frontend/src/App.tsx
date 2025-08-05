@@ -8,6 +8,7 @@ import LiquidPredictionPage from "./pages/LiquidPredictionPage";
 import LiquidModelPerformancePage from "./pages/LiquidModelPerformancePage";
 import BulkUpload from "./pages/BulkUpload";
 import AboutUs from './pages/AboutUs';
+import ContactUs from './pages/ContactUs';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/performance" element={<LiquidModelPerformancePage />} />
           <Route path="/bulk-upload" element={<BulkUpload />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
           {/* Add more routes like Login, About Us, Contact Us once created */}
         </Route>
       </Routes>

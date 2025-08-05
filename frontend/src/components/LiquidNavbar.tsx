@@ -20,6 +20,7 @@ const LiquidNavbar: React.FC = () => {
     { path: '/performance', label: 'Analytics', icon: '📊' },
     { path: '/bulk-upload', label: 'Bulk Upload', icon: '📤' },
     { path: '/about', label: 'About Us', icon: 'ℹ️' },
+    { path: '/contact', label: 'Contact Us', icon: '✉️' },
   ];
 
   return (
