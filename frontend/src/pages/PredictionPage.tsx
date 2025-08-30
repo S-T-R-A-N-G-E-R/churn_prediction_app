@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { CustomerData, churnAPI } from '../services/api';
-import ShapChart from '../components/ShapChart';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const PredictionPage: React.FC = () => {
@@ -59,7 +58,6 @@ const PredictionPage: React.FC = () => {
   const [explanation, setExplanation] = useState<any>(null);
   const [counterfactuals, setCounterfactuals] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'prediction' | 'explanation' | 'recommendations'>('prediction');
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     demographics: true,
@@ -193,7 +191,7 @@ const PredictionPage: React.FC = () => {
             🤖 AI-Powered Customer Churn Analysis
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Predict customer churn with machine learning and get actionable insights with SHAP explanations
+            Predict customer churn with machine learning and get actionable insights
           </p>
         </div>
 
@@ -379,15 +377,10 @@ const PredictionPage: React.FC = () => {
                         }`}>
                           Confidence: {(results.churn_probability * 100).toFixed(1)}%
                         </p>
-                        {/* Explicitly render inference time */}
-                        <p className="text-sm text-gray-600 font-medium" style={{ display: 'block', visibility: 'visible' }}>
+                        <p className="text-sm text-gray-600 font-medium">
                           Inference Time: {results.inference_time != null 
                             ? `${(results.inference_time * 1000).toFixed(2)} ms`
                             : 'Not available'}
-                        </p>
-                        {/* Debug element to confirm rendering */}
-                        <p className="text-sm text-blue-600 font-medium" style={{ border: '1px solid blue', padding: '2px' }}>
-                          Debug: Inference Time Present
                         </p>
                       </div>
                     </div>
@@ -403,81 +396,29 @@ const PredictionPage: React.FC = () => {
                   </div>
 
                   {explanation && (
-                    <div>
-                      <div className="flex space-x-1 mb-4 bg-gray-100 rounded-lg p-1">
-                        <button
-                          onClick={() => setActiveTab('prediction')}
-                          className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                            activeTab === 'prediction' 
-                              ? 'bg-white text-blue-600 shadow-sm' 
-                              : 'text-gray-600 hover:text-gray-900'
-                          }`}
-                        >
-                          📊 Summary
-                        </button>
-                        <button
-                          onClick={() => setActiveTab('explanation')}
-                          className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                            activeTab === 'explanation' 
-                              ? 'bg-white text-blue-600 shadow-sm' 
-                              : 'text-gray-600 hover:text-gray-900'
-                          }`}
-                        >
-                          🔍 Analysis
-                        </button>
-                        {counterfactuals && (
-                          <button
-                            onClick={() => setActiveTab('recommendations')}
-                            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                              activeTab === 'recommendations' 
-                                ? 'bg-white text-blue-600 shadow-sm' 
-                                : 'text-gray-600 hover:text-gray-900'
-                            }`}
-                          >
-                            💡 Actions
-                          </button>
-                        )}
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-gray-900 flex items-center">
+                          <span className="mr-2">🎯</span>
+                          {results.prediction === 1 ? 'Key Risk Factors:' : 'Key Retention Factors:'}
+                        </h4>
+                        <div className="space-y-2">
+                          {explanation.top_features?.slice(0, 5).map((feature: any, index: number) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                              <span className="font-medium text-gray-800 text-sm">{feature.feature}</span>
+                              <span className={`font-bold text-sm px-3 py-1 rounded-full ${
+                                feature.impact > 0 
+                                  ? 'bg-red-100 text-red-700 border border-red-200' 
+                                  : 'bg-blue-100 text-blue-700 border border-blue-200'
+                              }`}>
+                                {feature.impact > 0 ? '+' : ''}{(feature.impact * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
-                      {activeTab === 'prediction' && (
-                        <div className="space-y-3">
-                          <h4 className="font-semibold text-gray-900 flex items-center">
-                            <span className="mr-2">🎯</span>
-                            {results.prediction === 1 ? 'Key Risk Factors:' : 'Key Retention Factors:'}
-                          </h4>
-                          <div className="space-y-2">
-                            {explanation.top_features?.slice(0, 5).map((feature: any, index: number) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                                <span className="font-medium text-gray-800 text-sm">{feature.feature}</span>
-                                <span className={`font-bold text-sm px-3 py-1 rounded-full ${
-                                  feature.impact > 0 
-                                    ? 'bg-red-100 text-red-700 border border-red-200' 
-                                    : 'bg-blue-100 text-blue-700 border border-blue-200'
-                                }`}>
-                                  {feature.impact > 0 ? '+' : ''}{(feature.impact * 100).toFixed(1)}%
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {activeTab === 'explanation' && (
-                        <div className="space-y-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600 mb-4">
-                              📊 Detailed feature analysis shown below
-                            </p>
-                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                              <p className="text-xs text-blue-700">
-                                Scroll down to see the full SHAP feature importance chart
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {activeTab === 'recommendations' && counterfactuals && (
+                      {counterfactuals && (
                         <div className="space-y-3">
                           <h4 className="font-semibold text-gray-900 flex items-center">
                             <span className="mr-2">🛠️</span>
@@ -525,33 +466,6 @@ const PredictionPage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {activeTab === 'explanation' && explanation?.shap_data && (
-          <div className="mt-10">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  🎯 Detailed Feature Impact Analysis
-                </h2>
-                <p className="text-gray-600">
-                  Understanding what drives the {results.prediction === 1 ? 'churn risk' : 'retention factors'} for this customer
-                </p>
-              </div>
-
-              <ShapChart 
-                shapData={explanation.shap_data} 
-                title={`SHAP Feature Importance ${results.prediction === 1 ? '(Churn Drivers)' : '(Retention Factors)'}`}
-              />
-
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 text-center">
-                  💡 <strong>How to read this chart:</strong> Red bars show features that increase churn risk, 
-                  while blue bars show features that decrease churn risk. Longer bars indicate stronger influence.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -1,13 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ShapChart from './ShapChart';
 
 interface ResultsPanelProps {
   results: any;
   explanation: any;
   counterfactuals?: any;
   activeTab: string;
-  onTabChange: (tab: 'summary' | 'analysis' | 'actions') => void;
+  onTabChange: (tab: 'summary' | 'actions') => void;
 }
 
 const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({ 
@@ -31,7 +30,6 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({
 
   const tabs = [
     { key: 'summary' as const, label: 'Summary', icon: '📊' },
-    { key: 'analysis' as const, label: 'Analysis', icon: '🔍' },
     ...(counterfactuals && results.prediction === 1 ? [{ key: 'actions' as const, label: 'Actions', icon: '💡' }] : [])
   ];
 
@@ -90,8 +88,8 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({
           </div>
         </motion.div>
 
-        {/* Tabs - Show for all predictions if we have explanation data */}
-        {explanation && (
+        {/* Tabs - Show only if we have counterfactuals for high churn risk */}
+        {explanation && counterfactuals && results.prediction === 1 && tabs.length > 1 && (
           <>
             <div className="flex space-x-1 mb-6 bg-white/5 rounded-xl p-1">
               {tabs.map((tab) => (
@@ -146,28 +144,6 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({
                   </div>
                 )}
 
-                {activeTab === 'analysis' && (
-                    <div className="space-y-4">
-                        <div className="text-center p-8">
-                        <div className="glass-surface bg-blue-500/10 p-6 rounded-xl border border-blue-500/20">
-                            <h4 className="text-lg font-semibold text-glass mb-3">
-                            📊 Detailed Analysis Available
-                            </h4>
-                            <p className="text-glass-secondary text-sm">
-                            Switch to the Analysis tab to view the comprehensive SHAP feature importance chart below.
-                            </p>
-                            <div className="mt-4">
-                            <div className="inline-flex items-center space-x-2 text-blue-300">
-                                <span>📍</span>
-                                <span className="text-sm font-medium">Full chart displayed below</span>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    )}
-
-
                 {activeTab === 'actions' && counterfactuals && (
                   <div className="space-y-3">
                     <h4 className="font-semibold text-glass flex items-center mb-4">
@@ -212,6 +188,34 @@ const LiquidResultsPanel: React.FC<ResultsPanelProps> = ({
               </motion.div>
             </AnimatePresence>
           </>
+        )}
+
+        {/* Show summary directly if no tabs needed */}
+        {explanation && !(counterfactuals && results.prediction === 1 && tabs.length > 1) && (
+          <div className="space-y-3">
+            <h4 className="font-semibold text-glass flex items-center mb-4">
+              <span className="mr-2">🎯</span>
+              {results.prediction === 1 ? 'Key Risk Factors:' : 'Key Retention Factors:'}
+            </h4>
+            {explanation.top_features?.slice(0, 5).map((feature: any, index: number) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center justify-between p-4 glass-surface bg-white/5 rounded-xl"
+              >
+                <span className="font-medium text-glass">{feature.feature}</span>
+                <span className={`font-bold px-3 py-1 rounded-full text-sm ${
+                  feature.impact > 0 
+                    ? 'bg-red-500/20 text-red-300 border border-red-500/30' 
+                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                }`}>
+                  {feature.impact > 0 ? '+' : ''}{(feature.impact * 100).toFixed(1)}%
+                </span>
+              </motion.div>
+            ))}
+          </div>
         )}
       </div>
     </div>
