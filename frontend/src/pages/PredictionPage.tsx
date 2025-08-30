@@ -5,7 +5,6 @@ import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const PredictionPage: React.FC = () => {
   const [customerData, setCustomerData] = useState<CustomerData>({
-    // Demographics
     Age: 35,
     Gender: 1,
     Senior_Citizen: 0,
@@ -13,8 +12,6 @@ const PredictionPage: React.FC = () => {
     Partner: 1,
     Dependents: 1,
     Number_of_Dependents: 1,
-    
-    // Service Information
     Phone_Service: 1,
     Multiple_Lines: 1,
     Internet_Service: 1,
@@ -29,39 +26,29 @@ const PredictionPage: React.FC = () => {
     Streaming_Movies: 1,
     Streaming_Music: 1,
     Unlimited_Data: 1,
-    
-    // Contract & Billing
     Contract_One_Year: 1,
     Contract_Two_Year: 0,
     Paperless_Billing: 1,
     Payment_Method_Credit_Card: 1,
     Payment_Method_Mailed_Check: 0,
-    
-    // Offers & Marketing
     Offer_Offer_A: 0,
     Offer_Offer_B: 1,
     Offer_Offer_C: 0,
     Offer_Offer_D: 0,
     Offer_Offer_E: 0,
-    
-    // Usage & Charges
     Monthly_Charge: 75.5,
     Total_Revenue: 2500,
     Total_Extra_Data_Charges: 0,
-    Total_Long_Distance_Charges: 300,
+    Total_Long_Distance_Charges: 0,
     Total_Refunds: 0,
     Avg_Monthly_GB_Download: 25,
     Avg_Monthly_Long_Distance_Charges: 22.5,
-    
-    // Customer Metrics
     Tenure_in_Months: 24,
     Satisfaction_Score: 3,
     CLTV: 4200,
     Number_of_Referrals: 2,
     Referred_a_Friend: 1,
     Population: 50000,
-    
-    // Engineered Features
     Monthly_to_Total_Ratio: 0.0302,
     Tenure_Quartile: 2,
     Early_Churner_Risk: 0,
@@ -99,44 +86,40 @@ const PredictionPage: React.FC = () => {
   };
 
   const handlePredict = async () => {
-  setLoading(true);
-  try {
-    // Get prediction
-    const predictionResult = await churnAPI.predict(customerData);
-    console.log('Prediction Result:', predictionResult); // Debug log
-    setResults(predictionResult);
-    
-    // Always get SHAP explanations
+    setLoading(true);
     try {
-      const explanationResult = await churnAPI.explain(customerData);
-      console.log('Explanation Result:', explanationResult); // Debug log
-      setExplanation(explanationResult);
-    } catch (error) {
-      console.log('SHAP explanation not available:', error);
-      setExplanation(null);
-    }
-    
-    // Get counterfactuals only if customer is predicted to churn
-    if (predictionResult.prediction === 1) {
+      const predictionResult = await churnAPI.predict(customerData);
+      console.log('Prediction Result:', predictionResult);
+      setResults(predictionResult);
+
       try {
-        const counterfactualResult = await churnAPI.getCounterfactuals(customerData, 0, 1);
-        console.log('Counterfactual Result:', counterfactualResult); // Debug log
-        setCounterfactuals(counterfactualResult);
+        const explanationResult = await churnAPI.explain(customerData);
+        console.log('Explanation Result:', explanationResult);
+        setExplanation(explanationResult);
       } catch (error) {
-        console.log('Counterfactuals not available:', error);
+        console.log('SHAP explanation not available:', error);
+        setExplanation(null);
+      }
+
+      if (predictionResult.prediction === 1) {
+        try {
+          const counterfactualResult = await churnAPI.getCounterfactuals(customerData, 0, 1);
+          console.log('Counterfactual Result:', counterfactualResult);
+          setCounterfactuals(counterfactualResult);
+        } catch (error) {
+          console.log('Counterfactuals not available:', error);
+          setCounterfactuals(null);
+        }
+      } else {
         setCounterfactuals(null);
       }
-    } else {
-      setCounterfactuals(null);
+    } catch (error) {
+      console.error('Prediction error:', error);
+      alert('Error connecting to the prediction service. Make sure your backend is running on http://127.0.0.1:8000');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Prediction error:', error);
-    alert('Error connecting to the prediction service. Make sure your backend is running on http://127.0.0.1:8000');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const FormSection: React.FC<{
     title: string;
@@ -145,7 +128,7 @@ const PredictionPage: React.FC = () => {
     fields: Array<{key: keyof CustomerData, label: string, type: 'number' | 'select', options?: Array<{value: number, label: string}>}>
   }> = ({ title, section, icon, fields }) => {
     const isExpanded = expandedSections[section];
-    
+
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
         <button
@@ -165,7 +148,7 @@ const PredictionPage: React.FC = () => {
             <ChevronRightIcon className="w-5 h-5 text-gray-400 transition-transform duration-200" />
           )}
         </button>
-        
+
         {isExpanded && (
           <div className="px-6 pb-6 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
@@ -205,7 +188,6 @@ const PredictionPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Enhanced Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
             🤖 AI-Powered Customer Churn Analysis
@@ -214,9 +196,8 @@ const PredictionPage: React.FC = () => {
             Predict customer churn with machine learning and get actionable insights with SHAP explanations
           </p>
         </div>
-        
+
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Enhanced Form with Collapsible Sections */}
           <div className="lg:col-span-2 space-y-4">
             <FormSection
               title="Demographics"
@@ -232,7 +213,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Number_of_Dependents', label: 'Number of Dependents', type: 'number'},
               ]}
             />
-
             <FormSection
               title="Phone & Internet Services"
               section="services"
@@ -246,7 +226,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Internet_Type_No_Internet', label: 'No Internet Service', type: 'select', options: [{value: 0, label: 'No'}, {value: 1, label: 'Yes'}]},
               ]}
             />
-
             <FormSection
               title="Security & Add-on Services"
               section="security"
@@ -259,7 +238,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Unlimited_Data', label: 'Unlimited Data', type: 'select', options: [{value: 0, label: 'No'}, {value: 1, label: 'Yes'}]},
               ]}
             />
-
             <FormSection
               title="Entertainment Services"
               section="entertainment"
@@ -270,7 +248,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Streaming_Music', label: 'Streaming Music', type: 'select', options: [{value: 0, label: 'No'}, {value: 1, label: 'Yes'}]},
               ]}
             />
-
             <FormSection
               title="Contract & Billing"
               section="billing"
@@ -283,7 +260,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Payment_Method_Mailed_Check', label: 'Mailed Check Payment', type: 'select', options: [{value: 0, label: 'No'}, {value: 1, label: 'Yes'}]},
               ]}
             />
-
             <FormSection
               title="Special Offers & Promotions"
               section="offers"
@@ -296,7 +272,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Offer_Offer_E', label: 'Offer E', type: 'select', options: [{value: 0, label: 'No'}, {value: 1, label: 'Yes'}]},
               ]}
             />
-
             <FormSection
               title="Financial Information"
               section="financial"
@@ -310,7 +285,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'CLTV', label: 'Customer Lifetime Value ($)', type: 'number'},
               ]}
             />
-
             <FormSection
               title="Usage Patterns"
               section="usage"
@@ -321,7 +295,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Monthly_to_Total_Ratio', label: 'Monthly to Total Ratio', type: 'number'},
               ]}
             />
-
             <FormSection
               title="Customer Experience & Engagement"
               section="experience"
@@ -340,7 +313,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Population', label: 'Area Population', type: 'number'},
               ]}
             />
-
             <FormSection
               title="Risk Indicators"
               section="risk"
@@ -356,8 +328,6 @@ const PredictionPage: React.FC = () => {
                 {key: 'Low_Satisfaction', label: 'Low Satisfaction Flag', type: 'select', options: [{value: 0, label: 'No'}, {value: 1, label: 'Yes'}]},
               ]}
             />
-
-            {/* Enhanced Predict Button */}
             <div className="pt-6">
               <button
                 onClick={handlePredict}
@@ -376,7 +346,6 @@ const PredictionPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Enhanced Results Panel */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden sticky top-8">
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
@@ -385,37 +354,45 @@ const PredictionPage: React.FC = () => {
                   Analysis Results
                 </h2>
               </div>
-              
+
               {results ? (
                 <div className="p-6 space-y-6">
-                  {/* Enhanced Prediction Result */}
                   <div className={`p-6 rounded-xl border-2 ${
                     results.prediction === 1 
                       ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300' 
                       : 'bg-gradient-to-r from-green-50 to-green-100 border-green-300'
                   }`}>
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="space-y-2">
                       <div className="flex items-center space-x-3">
                         <span className="text-3xl">
                           {results.prediction === 1 ? '⚠️' : '✅'}
                         </span>
-                        <div>
-                          <h3 className={`font-bold text-lg ${
-                            results.prediction === 1 ? 'text-red-800' : 'text-green-800'
-                          }`}>
-                            {results.prediction === 1 ? 'High Churn Risk' : 'Low Churn Risk'}
-                          </h3>
-                          <p className={`text-sm font-medium ${
-                            results.prediction === 1 ? 'text-red-600' : 'text-green-600'
-                          }`}>
-                            Confidence: {(results.churn_probability * 100).toFixed(1)}%
-                          </p>
-                        </div>
+                        <h3 className={`font-bold text-lg ${
+                          results.prediction === 1 ? 'text-red-800' : 'text-green-800'
+                        }`}>
+                          {results.prediction === 1 ? 'High Churn Risk' : 'Low Churn Risk'}
+                        </h3>
+                      </div>
+                      <div className="space-y-1">
+                        <p className={`text-sm font-medium ${
+                          results.prediction === 1 ? 'text-red-600' : 'text-green-600'
+                        }`}>
+                          Confidence: {(results.churn_probability * 100).toFixed(1)}%
+                        </p>
+                        {/* Explicitly render inference time */}
+                        <p className="text-sm text-gray-600 font-medium" style={{ display: 'block', visibility: 'visible' }}>
+                          Inference Time: {results.inference_time != null 
+                            ? `${(results.inference_time * 1000).toFixed(2)} ms`
+                            : 'Not available'}
+                        </p>
+                        {/* Debug element to confirm rendering */}
+                        <p className="text-sm text-blue-600 font-medium" style={{ border: '1px solid blue', padding: '2px' }}>
+                          Debug: Inference Time Present
+                        </p>
                       </div>
                     </div>
-                    
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-3">
+
+                    <div className="w-full bg-gray-200 rounded-full h-3 mt-4">
                       <div 
                         className={`h-3 rounded-full transition-all duration-1000 ${
                           results.prediction === 1 ? 'bg-red-500' : 'bg-green-500'
@@ -425,7 +402,6 @@ const PredictionPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Enhanced Tabs */}
                   {explanation && (
                     <div>
                       <div className="flex space-x-1 mb-4 bg-gray-100 rounded-lg p-1">
@@ -463,7 +439,6 @@ const PredictionPage: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Enhanced Tab Content */}
                       {activeTab === 'prediction' && (
                         <div className="space-y-3">
                           <h4 className="font-semibold text-gray-900 flex items-center">
@@ -551,7 +526,6 @@ const PredictionPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Full-width SHAP Chart - Enhanced */}
         {activeTab === 'explanation' && explanation?.shap_data && (
           <div className="mt-10">
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
@@ -563,12 +537,12 @@ const PredictionPage: React.FC = () => {
                   Understanding what drives the {results.prediction === 1 ? 'churn risk' : 'retention factors'} for this customer
                 </p>
               </div>
-              
+
               <ShapChart 
                 shapData={explanation.shap_data} 
                 title={`SHAP Feature Importance ${results.prediction === 1 ? '(Churn Drivers)' : '(Retention Factors)'}`}
               />
-              
+
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600 text-center">
                   💡 <strong>How to read this chart:</strong> Red bars show features that increase churn risk, 

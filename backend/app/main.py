@@ -133,6 +133,10 @@ def read_root():
 def health_check():
     return {"status": "healthy"}
 
+from fastapi import APIRouter  # or FastAPI, depending on your setup
+import time
+import pandas as pd
+
 @app.post("/predict")
 def predict(data: CustomerData):
     input_dict = data.dict()
@@ -141,15 +145,28 @@ def predict(data: CustomerData):
 
     X_num_scaled = scaler.transform(X_num)
     X_num_scaled_df = pd.DataFrame(X_num_scaled, columns=scaled_cols)
+    model_input = pd.concat(
+        [X_num_scaled_df, X_other], axis=1
+    )[expected_features]
 
-    model_input = pd.concat([X_num_scaled_df, X_other], axis=1)[expected_features]
+    # --- Begin measuring time ---
+    start_time = time.perf_counter()
 
     proba = model.predict_proba(model_input)[:, 1][0]
     prediction = int(proba > 0.5)
+
+    # --- End measuring time ---
+    end_time = time.perf_counter()
+    inference_time = round(end_time - start_time, 6)  # seconds, 6 decimals
+    print(f"Inference time: {inference_time} seconds")
+
+
     return {
         "prediction": prediction,
-        "churn_probability": round(proba, 4)
+        "churn_probability": round(proba, 4),
+        "inference_time": inference_time  # seconds
     }
+
 
 @app.post("/explain")
 def explain(data: CustomerData):
