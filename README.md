@@ -601,7 +601,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 <tr>
 <td align="center">
 
-[![GitHub](https://img.shields.io/badge/GitHub-S--T--R--A--N--G--E--R-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rupsha2003)
+[![GitHub](https://img.shields.io/badge/GitHub-Rupsha2003-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rupsha2003)
 
 </td>
 <td align="center">
