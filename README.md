@@ -594,6 +594,29 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 </tr>
 </table>
 
+### **Rupsha Das** 
+*Masters Student in Data Science*
+
+<table>
+<tr>
+<td align="center">
+
+[![GitHub](https://img.shields.io/badge/GitHub-S--T--R--A--N--G--E--R-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rupsha2003)
+
+</td>
+<td align="center">
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rupsha-das-52101b2a6/)
+
+</td>
+<td align="center">
+
+[![Student](https://img.shields.io/badge/🎓-Data%20Science%20Student-FF6B6B?style=for-the-badge&logoColor=white)](#)
+
+</td>
+</tr>
+</table>
+
 *"Making AI accessible, explainable, and beautiful"*
 
 </div>
